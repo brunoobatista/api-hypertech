@@ -1,21 +1,15 @@
 package com.rancotech.tendtudo.cors;
 
-import java.io.IOException;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.rancotech.tendtudo.config.property.TendtudoApiProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 
 @Component
@@ -38,8 +32,9 @@ public class CorsFilter implements Filter {
 		
 		if ("OPTIONS".equals(req.getMethod()) && tendtudoApiProperty.getOriginPermitida().equals(req.getHeader("Origin"))) {
 			resp.setHeader("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT, OPTIONS");
-            resp.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type, Accept");
-            resp.setHeader("Access-Control-Max-Age", "3600");
+			resp.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type, Accept");
+			resp.setHeader("Access-Control-Expose-Headers", "Authorization, Content-Type, Accept, x-total-count");
+			resp.setHeader("Access-Control-Max-Age", "3600");
 			resp.setStatus(HttpServletResponse.SC_OK);
 		} else {
 			chain.doFilter(request, response);

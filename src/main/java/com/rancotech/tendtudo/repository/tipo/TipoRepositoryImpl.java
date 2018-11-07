@@ -58,7 +58,7 @@ public class TipoRepositoryImpl implements TipoRepositoryQuery {
         int paginaAtual = pageable.getPageNumber();
         int totalRegistrosPorPagina = pageable.getPageSize();
         int primeiroRegistroDaPagina = paginaAtual * totalRegistrosPorPagina;
-
+        System.out.println(paginaAtual + " : " + totalRegistrosPorPagina + " : " + primeiroRegistroDaPagina);
         query.setFirstResult(primeiroRegistroDaPagina);
         query.setMaxResults(totalRegistrosPorPagina);
     }
