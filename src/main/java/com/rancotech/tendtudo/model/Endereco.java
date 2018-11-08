@@ -15,11 +15,6 @@ public class Endereco implements Serializable {
 
     private String complemento;
 
-    public static long getSerialVersionUID() {
-
-        return serialVersionUID;
-    }
-
     public String getEndereco() {
         return endereco;
     }
