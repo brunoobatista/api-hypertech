@@ -21,7 +21,8 @@ public class Fornecedor {
 
     @NotBlank
     @Size(min = 3, max = 60)
-    private String nome_fantasia;
+    @Column(name = "nome_fantasia")
+    private String nomeFantasia;
 
     @NotBlank
     @Column(name = "cpf_cnpj")
@@ -55,12 +56,12 @@ public class Fornecedor {
         this.nome = nome;
     }
 
-    public String getNome_fantasia() {
-        return nome_fantasia;
+    public String getNomeFantasia() {
+        return nomeFantasia;
     }
 
-    public void setNome_fantasia(String nome_fantasia) {
-        this.nome_fantasia = nome_fantasia;
+    public void setNomeFantasia(String nomeFantasia) {
+        this.nomeFantasia = nomeFantasia;
     }
 
     public String getCpfOuCnpj() {
