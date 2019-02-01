@@ -7,6 +7,6 @@ import org.springframework.data.domain.Pageable;
 
 public interface FornecedorRepositoryQuery {
 
-    public Page<Fornecedor> filtrar(FornecedorFilter fornecedorFilterFilter, Pageable pageable);
+    Page<Fornecedor> filtrar(FornecedorFilter fornecedorFilter, Pageable pageable);
 
 }
