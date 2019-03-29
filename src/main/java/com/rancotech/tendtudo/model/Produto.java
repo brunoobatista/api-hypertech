@@ -5,6 +5,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -29,6 +31,21 @@ public class Produto {
     @ManyToOne
     @JoinColumn(name = "id_tipo")
     private Tipo tipo;
+
+    @OneToMany(
+            mappedBy = "produto",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<VendaProduto> vendas = new ArrayList<>();
+
+    public List<VendaProduto> getVendas() {
+        return vendas;
+    }
+
+    public void setVendas(List<VendaProduto> vendas) {
+        this.vendas = vendas;
+    }
 
     public Long getId() {
         return id;
