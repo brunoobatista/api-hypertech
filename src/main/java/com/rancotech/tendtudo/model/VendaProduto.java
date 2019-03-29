@@ -13,11 +13,11 @@ public class VendaProduto {
     private VendaProdutoId id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("vendaId")
+    @MapsId("idVenda")
     private Venda venda;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("produtoId")
+    @MapsId("idProduto")
     private Produto produto;
 
     @Column(name = "quantidade")
@@ -26,8 +26,9 @@ public class VendaProduto {
     private VendaProduto() {}
 
     public VendaProduto(
-            Venda venda, Produto produto
+            Venda venda, Produto produto, Integer quantidade
     ) {
+        this.quantidade = quantidade;
         this.venda = venda;
         this.produto = produto;
         this.id = new VendaProdutoId(venda.getId(), produto.getId());

@@ -28,8 +28,8 @@ public class Usuario {
     private String username;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "usuario_permissao", joinColumns = @JoinColumn(name = "id_usuario"),
-        inverseJoinColumns = @JoinColumn(name = "id_permissao"))
+    @JoinTable(name = "usuario_permissao", joinColumns = @JoinColumn(name = "usuario_id"),
+        inverseJoinColumns = @JoinColumn(name = "permissao_id"))
     private List<Permissao> permissoes;
 
     public Long getId() {

@@ -32,14 +32,15 @@ public class Venda {
 
     /* RELACIONAMENTO ONE TO ONE*/
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_usuario")
+    @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
     @Column(name = "observacao")
     private String observacao;
 
-    public void addProduto(Produto produto) {
-        VendaProduto vendaProduto = new VendaProduto(this, produto);
+    public void addProduto(Produto produto, Integer quantidade) {
+        VendaProduto vendaProduto = new VendaProduto(this, produto, quantidade);
+
         produtos.add(vendaProduto);
         //produto.getVendas().add(vendaProduto);
     }
@@ -50,7 +51,7 @@ public class Venda {
             if (vendaProduto.getVenda().equals(this) &&
                     vendaProduto.getProduto().equals(produto)) {
                 iterator.remove();
-                vendaProduto.getProduto().getVendas().remove(vendaProduto);
+                //vendaProduto.getProduto().getVendas().remove(vendaProduto);
                 vendaProduto.setVenda(null);
                 vendaProduto.setProduto(null);
             }

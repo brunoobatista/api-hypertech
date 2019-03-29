@@ -37,7 +37,7 @@ public class Fornecedor {
     private Endereco endereco;
 
     @ManyToOne
-    @JoinColumn(name = "id_cidade")
+    @JoinColumn(name = "cidade_id")
     private Cidade cidade;
 
     public Long getId() {

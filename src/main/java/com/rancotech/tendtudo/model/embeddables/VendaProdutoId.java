@@ -2,42 +2,43 @@ package com.rancotech.tendtudo.model.embeddables;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
 public class VendaProdutoId implements Serializable {
 
-    @Column(name = "venda_id")
-    private Long vendaId;
+    @Column(name = "id_venda")
+    private Long idVenda;
 
-    @Column(name = "produto_id")
-    private Long produtoId;
+    @Column(name = "id_produto")
+    private Long idProduto;
 
     private VendaProdutoId() {}
 
     public VendaProdutoId(
-            Long vendaId,
-            Long produtoId
+            Long idVenda,
+            Long idProduto
     ) {
-        this.vendaId = vendaId;
-        this.produtoId = produtoId;
+        this.idVenda = idVenda;
+        this.idProduto = idProduto;
     }
 
-    public Long getVendaId() {
-        return vendaId;
+    public Long getIdVenda() {
+        return idVenda;
     }
 
-    public void setVendaId(Long vendaId) {
-        this.vendaId = vendaId;
+    public void setIdVenda(Long idVenda) {
+        this.idVenda = idVenda;
     }
 
-    public Long getProdutoId() {
-        return produtoId;
+    public Long getIdProduto() {
+        return idProduto;
     }
 
-    public void setProdutoId(Long produtoId) {
-        this.produtoId = produtoId;
+    public void setIdProduto(Long idProduto) {
+        this.idProduto = idProduto;
     }
 
     @Override
@@ -45,12 +46,12 @@ public class VendaProdutoId implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         VendaProdutoId that = (VendaProdutoId) o;
-        return Objects.equals(vendaId, that.vendaId) &&
-                Objects.equals(produtoId, that.produtoId);
+        return Objects.equals(idVenda, that.idVenda) &&
+                Objects.equals(idProduto, that.idProduto);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(vendaId, produtoId);
+        return Objects.hash(idVenda, idProduto);
     }
 }

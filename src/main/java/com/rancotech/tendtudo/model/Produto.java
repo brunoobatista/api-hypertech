@@ -29,13 +29,14 @@ public class Produto {
     private BigDecimal valor;
 
     @ManyToOne
-    @JoinColumn(name = "id_tipo")
+    @JoinColumn(name = "tipo_id")
     private Tipo tipo;
 
-    @OneToMany(
+    /*@OneToMany(
             mappedBy = "produto",
             cascade = CascadeType.ALL,
-            orphanRemoval = true
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
     )
     private List<VendaProduto> vendas = new ArrayList<>();
 
@@ -45,7 +46,7 @@ public class Produto {
 
     public void setVendas(List<VendaProduto> vendas) {
         this.vendas = vendas;
-    }
+    }*/
 
     public Long getId() {
         return id;
