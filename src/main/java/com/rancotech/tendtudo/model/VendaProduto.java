@@ -1,5 +1,8 @@
 package com.rancotech.tendtudo.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.rancotech.tendtudo.model.embeddables.VendaProdutoId;
 
 import javax.persistence.*;
@@ -7,15 +10,19 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "venda_produtos")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class VendaProduto {
 
     @EmbeddedId
+    @JsonIgnore
     private VendaProdutoId id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("idVenda")
+    @JsonIgnore
     private Venda venda;
 
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("idProduto")
     private Produto produto;

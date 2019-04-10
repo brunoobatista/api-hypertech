@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS venda
 (
     id BIGSERIAL,
-    data_venda date NOT NULL,
+    data_venda timestamp NOT NULL,
     valor numeric(10,2) NOT NULL,
     observacao text,
     usuario_id bigint NOT NULL,

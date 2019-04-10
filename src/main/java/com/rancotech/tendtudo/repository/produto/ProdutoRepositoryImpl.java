@@ -1,8 +1,6 @@
 package com.rancotech.tendtudo.repository.produto;
 
-import com.rancotech.tendtudo.model.Fornecedor;
 import com.rancotech.tendtudo.model.Produto;
-import com.rancotech.tendtudo.repository.filter.FornecedorFilter;
 import com.rancotech.tendtudo.repository.filter.ProdutoFilter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
