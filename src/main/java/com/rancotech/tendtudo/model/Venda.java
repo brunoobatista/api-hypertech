@@ -41,6 +41,17 @@ public class Venda {
     @Column(name = "observacao")
     private String observacao;
 
+    @Column(name="desconto")
+    private BigDecimal desconto;
+
+    @PrePersist
+    @PreUpdate
+    private void setValorComDesconto() {
+        System.out.println("sem desconto: " + this.valor + " ### " + this.desconto);
+        this.valor = this.valor.subtract(this.desconto);
+        System.out.println("com desconto: " + this.valor + " ### " + this.desconto);
+    }
+
     public void addProduto(Produto produto, Integer quantidade) {
         VendaProduto vendaProduto = new VendaProduto(this, produto, quantidade);
 
@@ -59,6 +70,14 @@ public class Venda {
                 vendaProduto.setProduto(null);
             }
         }
+    }
+
+    public BigDecimal getDesconto() {
+        return desconto;
+    }
+
+    public void setDesconto(BigDecimal desconto) {
+        this.desconto = desconto;
     }
 
     public List<VendaProduto> getProdutos() {
