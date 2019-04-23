@@ -4,12 +4,13 @@ package com.rancotech.tendtudo.model;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
 
 @Entity
 @Table(name = "produto")
-public class Produto {
+public class Produto implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,8 +28,24 @@ public class Produto {
     private BigDecimal valor;
 
     @ManyToOne
-    @JoinColumn(name = "id_tipo")
+    @JoinColumn(name = "tipo_id")
     private Tipo tipo;
+
+    /*@OneToMany(
+            mappedBy = "produto",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
+    private List<VendaProduto> vendas = new ArrayList<>();
+
+    public List<VendaProduto> getVendas() {
+        return vendas;
+    }
+
+    public void setVendas(List<VendaProduto> vendas) {
+        this.vendas = vendas;
+    }*/
 
     public Long getId() {
         return id;

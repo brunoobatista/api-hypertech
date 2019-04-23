@@ -1,4 +1,4 @@
-CREATE TABLE usuario (
+CREATE TABLE IF NOT EXISTS usuario (
   id BIGSERIAL PRIMARY KEY,
   nome VARCHAR(50) NOT NULL,
   email VARCHAR(50) NOT NULL UNIQUE,
@@ -6,17 +6,17 @@ CREATE TABLE usuario (
   password VARCHAR(150) NOT NULL
 );
 
-CREATE TABLE permissao (
+CREATE TABLE IF NOT EXISTS permissao (
   id BIGSERIAL PRIMARY KEY ,
   descricao VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE usuario_permissao (
-  id_usuario BIGINT NOT NULL,
-  id_permissao BIGINT NOT NULL,
-  PRIMARY KEY (id_usuario, id_permissao),
-  FOREIGN KEY (id_usuario) REFERENCES usuario(id),
-  FOREIGN KEY (id_permissao) REFERENCES permissao(id)
+CREATE TABLE IF NOT EXISTS usuario_permissao (
+  usuario_id BIGINT NOT NULL,
+  permissao_id BIGINT NOT NULL,
+  PRIMARY KEY (usuario_id, permissao_id),
+  FOREIGN KEY (usuario_id) REFERENCES usuario(id),
+  FOREIGN KEY (permissao_id) REFERENCES permissao(id)
 );
 
 INSERT INTO usuario (id, nome, email, username, password) values (1, 'Administrador', 'admin@algamoney.com', 'admin','$2a$10$X607ZPhQ4EgGNaYKt3n4SONjIv9zc.VMWdEuhCuba7oLAL5IvcL5.');
@@ -31,12 +31,12 @@ INSERT INTO permissao (id, descricao) values (5, 'ROLE_PESQUISAR_PRODUTO');
 
 
 -- admin
-INSERT INTO usuario_permissao (id_usuario, id_permissao) values (1, 1);
-INSERT INTO usuario_permissao (id_usuario, id_permissao) values (1, 2);
-INSERT INTO usuario_permissao (id_usuario, id_permissao) values (1, 3);
-INSERT INTO usuario_permissao (id_usuario, id_permissao) values (1, 4);
-INSERT INTO usuario_permissao (id_usuario, id_permissao) values (1, 5);
+INSERT INTO usuario_permissao (usuario_id, permissao_id) values (1, 1);
+INSERT INTO usuario_permissao (usuario_id, permissao_id) values (1, 2);
+INSERT INTO usuario_permissao (usuario_id, permissao_id) values (1, 3);
+INSERT INTO usuario_permissao (usuario_id, permissao_id) values (1, 4);
+INSERT INTO usuario_permissao (usuario_id, permissao_id) values (1, 5);
 
 -- maria
-INSERT INTO usuario_permissao (id_usuario, id_permissao) values (2, 2);
-INSERT INTO usuario_permissao (id_usuario, id_permissao) values (2, 5);
+INSERT INTO usuario_permissao (usuario_id, permissao_id) values (2, 2);
+INSERT INTO usuario_permissao (usuario_id, permissao_id) values (2, 5);

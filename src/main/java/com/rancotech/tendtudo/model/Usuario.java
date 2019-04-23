@@ -1,5 +1,7 @@
 package com.rancotech.tendtudo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -22,14 +24,15 @@ public class Usuario {
     private String email;
 
     @NotEmpty
+    @JsonIgnore
     private String password;
 
     @NotEmpty
     private String username;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "usuario_permissao", joinColumns = @JoinColumn(name = "id_usuario"),
-        inverseJoinColumns = @JoinColumn(name = "id_permissao"))
+    @JoinTable(name = "usuario_permissao", joinColumns = @JoinColumn(name = "usuario_id"),
+        inverseJoinColumns = @JoinColumn(name = "permissao_id"))
     private List<Permissao> permissoes;
 
     public Long getId() {

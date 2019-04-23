@@ -1,8 +1,14 @@
 package com.rancotech.tendtudo.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,20 +20,73 @@ public class Venda {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="dataVenda")
+    @Column(name="data_venda")
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime dataVenda;
 
     @Column(name="valor")
     private BigDecimal valor;
-    /*RELACIONAMENTO MANY TO MANY*/
-    @Column(name = "produtos")
-    private List<Produto> produtos;
+
+    @OneToMany(
+            mappedBy = "venda"
+    )
+    private List<VendaProduto> produtos = new ArrayList<>();
+
     /* RELACIONAMENTO ONE TO ONE*/
-    @Column(name = "usuario")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
     @Column(name = "observacao")
     private String observacao;
+
+    @Column(name="desconto")
+    private BigDecimal desconto;
+
+    @PrePersist
+    @PreUpdate
+    private void setValorComDesconto() {
+        System.out.println("sem desconto: " + this.valor + " ### " + this.desconto);
+        this.valor = this.valor.subtract(this.desconto);
+        System.out.println("com desconto: " + this.valor + " ### " + this.desconto);
+    }
+
+    public void addProduto(Produto produto, Integer quantidade) {
+        VendaProduto vendaProduto = new VendaProduto(this, produto, quantidade);
+
+        produtos.add(vendaProduto);
+        //produto.getVendas().add(vendaProduto);
+    }
+
+    public void removeProduto(Produto produto) {
+        for (Iterator<VendaProduto> iterator = produtos.iterator(); iterator.hasNext();) {
+            VendaProduto vendaProduto = iterator.next();
+            if (vendaProduto.getVenda().equals(this) &&
+                    vendaProduto.getProduto().equals(produto)) {
+                iterator.remove();
+                //vendaProduto.getProduto().getVendas().remove(vendaProduto);
+                vendaProduto.setVenda(null);
+                vendaProduto.setProduto(null);
+            }
+        }
+    }
+
+    public BigDecimal getDesconto() {
+        return desconto;
+    }
+
+    public void setDesconto(BigDecimal desconto) {
+        this.desconto = desconto;
+    }
+
+    public List<VendaProduto> getProdutos() {
+        return produtos;
+    }
+
+    public void setProdutos(List<VendaProduto> produtos) {
+        this.produtos = produtos;
+    }
 
     public Long getId() {
         return id;
@@ -51,14 +110,6 @@ public class Venda {
 
     public void setValor(BigDecimal valor) {
         this.valor = valor;
-    }
-
-    public List<Produto> getProdutos() {
-        return produtos;
-    }
-
-    public void setProdutos(List<Produto> produtos) {
-        this.produtos = produtos;
     }
 
     public Usuario getUsuario() {
