@@ -10,27 +10,26 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "venda_produtos")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class VendaProduto {
 
-    @EmbeddedId
     @JsonIgnore
+    @EmbeddedId
     private VendaProdutoId id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("idVenda")
+    @MapsId("vendaId")
     @JsonIgnore
     private Venda venda;
 
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("idProduto")
+    @MapsId("produtoId")
     private Produto produto;
 
     @Column(name = "quantidade")
     private Integer quantidade;
 
-    private VendaProduto() {}
+    public VendaProduto() {}
 
     public VendaProduto(
             Venda venda, Produto produto, Integer quantidade

@@ -9,36 +9,36 @@ import java.util.Objects;
 @Embeddable
 public class VendaProdutoId implements Serializable {
 
-    @Column(name = "id_venda")
-    private Long idVenda;
+    @Column(name = "venda_id", insertable = false, updatable = false)
+    private Long vendaId;
 
-    @Column(name = "id_produto")
-    private Long idProduto;
+    @Column(name = "produto_id", insertable = false, updatable = false)
+    private Long produtoId;
 
-    private VendaProdutoId() {}
+    public VendaProdutoId() {}
 
     public VendaProdutoId(
-            Long idVenda,
-            Long idProduto
+            Long vendaId,
+            Long produtoId
     ) {
-        this.idVenda = idVenda;
-        this.idProduto = idProduto;
+        this.vendaId = vendaId;
+        this.produtoId = produtoId;
     }
 
-    public Long getIdVenda() {
-        return idVenda;
+    public Long getVendaId() {
+        return vendaId;
     }
 
-    public void setIdVenda(Long idVenda) {
-        this.idVenda = idVenda;
+    public void setVendaId(Long vendaId) {
+        this.vendaId = vendaId;
     }
 
-    public Long getIdProduto() {
-        return idProduto;
+    public Long getProdutoId() {
+        return produtoId;
     }
 
-    public void setIdProduto(Long idProduto) {
-        this.idProduto = idProduto;
+    public void setProdutoId(Long produtoId) {
+        this.produtoId = produtoId;
     }
 
     @Override
@@ -46,12 +46,12 @@ public class VendaProdutoId implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         VendaProdutoId that = (VendaProdutoId) o;
-        return Objects.equals(idVenda, that.idVenda) &&
-                Objects.equals(idProduto, that.idProduto);
+        return Objects.equals(vendaId, that.vendaId) &&
+                Objects.equals(produtoId, that.produtoId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idVenda, idProduto);
+        return Objects.hash(vendaId, produtoId);
     }
 }

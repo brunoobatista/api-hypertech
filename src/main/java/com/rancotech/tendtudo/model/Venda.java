@@ -1,11 +1,12 @@
 package com.rancotech.tendtudo.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -19,20 +20,17 @@ public class Venda {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="dataVenda")
+    @Column(name="data_venda")
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime dataVenda;
 
     @Column(name="valor")
     private BigDecimal valor;
 
     @OneToMany(
-            mappedBy = "venda",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
+            mappedBy = "venda"
     )
-    @JsonManagedReference
     private List<VendaProduto> produtos = new ArrayList<>();
-
 
     /* RELACIONAMENTO ONE TO ONE*/
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})

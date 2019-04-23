@@ -1,5 +1,7 @@
 package com.rancotech.tendtudo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -22,6 +24,7 @@ public class Usuario {
     private String email;
 
     @NotEmpty
+    @JsonIgnore
     private String password;
 
     @NotEmpty
