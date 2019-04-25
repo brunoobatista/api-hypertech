@@ -4,6 +4,7 @@ import com.rancotech.tendtudo.event.RecursoCriadoEvent;
 import com.rancotech.tendtudo.model.Produto;
 import com.rancotech.tendtudo.repository.ProdutoRepository;
 import com.rancotech.tendtudo.repository.filter.ProdutoFilter;
+import com.rancotech.tendtudo.service.exception.BuscaValorNullException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -29,6 +31,11 @@ public class ProdutoResource {
     @GetMapping
     public Page<Produto> listar(ProdutoFilter filter, Pageable pageable) {
         return produtoRepository.filtrar(filter, pageable);
+    }
+
+    @GetMapping("/search/{valor}")
+    public List<Produto> buscarTodos(@PathVariable String valor) {
+        return produtoRepository.findByNomeContainsOrderById(valor);
     }
 
     @PostMapping
@@ -51,5 +58,7 @@ public class ProdutoResource {
         produtoRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
+
 
 }
