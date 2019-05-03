@@ -9,5 +9,7 @@ import java.util.List;
 public interface ClienteRepository extends JpaRepository<Cliente, Long>, ClienteRepositoryQuery {
 
     List<Cliente> findByNomeContainsIgnoreCase(String valor);
+    boolean existsByEmail(String email);
+    boolean existsByCpfCnpj(String cpfCnpj);
 
 }

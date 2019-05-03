@@ -1,21 +1,23 @@
 package com.rancotech.tendtudo.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.rancotech.tendtudo.model.validation.ClienteGroupSequenceProvider;
+import com.rancotech.tendtudo.validation.AtributosConfirmacao;
+import com.rancotech.tendtudo.validation.CpfCnpjUnique;
 import org.hibernate.validator.group.GroupSequenceProvider;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
-import java.io.Serializable;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
+@AtributosConfirmacao(atributo = "password", atributoConfirmacao = "confirmPassword", id = "id", message = "Confirmação da senha não confere")
+@CpfCnpjUnique(cpfCnpj = "cpfCnpj", id = "id", message = "CPF/CNPJ já existentes")
 @Entity
 @Table(name = "cliente")
 @GroupSequenceProvider(ClienteGroupSequenceProvider.class)
-public class Cliente implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class Cliente {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,18 +30,17 @@ public class Cliente implements Serializable {
     @NotEmpty
     private String email;
 
-    @NotEmpty
-    @JsonIgnore
     private String password;
 
-    @NotEmpty
-    private String username;
+    @Transient
+    private String confirmPassword;
 
-    @NotEmpty
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_pessoa")
     private TipoPessoa tipoPessoa;
 
+
+    @NotEmpty
     @Column(name = "cpf_cnpj")
     private String cpfCnpj;
 
@@ -49,13 +50,19 @@ public class Cliente implements Serializable {
     }
 
     @PostLoad
+    @PostUpdate
     private void postLoad() {
         this.cpfCnpj = this.tipoPessoa.formatar(this.cpfCnpj);
     }
 
-    public String getCpfCnpjSemFormatacao() {
-        return TipoPessoa.removerFormatacao(this.cpfCnpj);
+    public String getConfirmPassword() {
+        return confirmPassword;
     }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
+    }
+
 
     public Long getId() {
         return id;
@@ -87,14 +94,6 @@ public class Cliente implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getCpfCnpj() {

@@ -4,6 +4,7 @@ import com.rancotech.tendtudo.event.RecursoCriadoEvent;
 import com.rancotech.tendtudo.model.Cliente;
 import com.rancotech.tendtudo.repository.ClienteRepository;
 import com.rancotech.tendtudo.repository.filter.ClienteFilter;
+import com.rancotech.tendtudo.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -25,6 +26,9 @@ public class ClienteResource {
     private ClienteRepository clienteRepository;
 
     @Autowired
+    private ClienteService clienteService;
+
+    @Autowired
     private ApplicationEventPublisher publisher;
 
     @GetMapping
@@ -40,7 +44,7 @@ public class ClienteResource {
 
     @PostMapping
     public ResponseEntity<Cliente> salvar(@Valid @RequestBody Cliente cliente, HttpServletResponse response) {
-        Cliente clienteSalvo= clienteRepository.save(cliente);
+        Cliente clienteSalvo= clienteService.salvar(cliente);
 
         publisher.publishEvent(new RecursoCriadoEvent(this, response, clienteSalvo.getId()));
 
@@ -54,9 +58,9 @@ public class ClienteResource {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> remover(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void remover(@PathVariable Long id) {
         clienteRepository.deleteById(id);
-        return ResponseEntity.noContent().build();
     }
 
 }

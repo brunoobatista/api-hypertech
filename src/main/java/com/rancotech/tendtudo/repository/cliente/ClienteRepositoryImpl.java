@@ -48,14 +48,6 @@ public class ClienteRepositoryImpl implements ClienteRepositoryQuery {
             predicates.add(builder.like(
                     builder.lower(root.get("nome")), "%" + clienteFilter.getNome().toLowerCase() + "%"));
         }
-        if (!StringUtils.isEmpty(clienteFilter.getEmail())) {
-            predicates.add(builder.like(
-                    builder.lower(root.get("nome")),clienteFilter.getEmail().toLowerCase() + "%"));
-        }
-        if (!StringUtils.isEmpty(clienteFilter.getCpfCnpj())) {
-            predicates.add(builder.like(
-                    builder.lower(root.get("nome")),clienteFilter.getCpfCnpj() + "%"));
-        }
 
         int size = predicates.size();
         return predicates.toArray(new Predicate[size]);

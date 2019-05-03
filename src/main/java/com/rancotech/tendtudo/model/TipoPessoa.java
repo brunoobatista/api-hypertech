@@ -3,6 +3,8 @@ package com.rancotech.tendtudo.model;
 import com.rancotech.tendtudo.model.validation.group.CnpjGroup;
 import com.rancotech.tendtudo.model.validation.group.CpfGroup;
 
+import javax.validation.constraints.NotEmpty;
+
 public enum TipoPessoa {
 
     FISICA("Física", "CPF", "000.000.000-00", CpfGroup.class) {

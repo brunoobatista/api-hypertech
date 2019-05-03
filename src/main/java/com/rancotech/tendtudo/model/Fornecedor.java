@@ -1,5 +1,6 @@
 package com.rancotech.tendtudo.model;
 
+import com.rancotech.tendtudo.validation.CpfCnpjUnique;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import javax.persistence.*;
@@ -7,6 +8,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
+@CpfCnpjUnique(cpfCnpj = "cpfOuCnpj", id = "id", message = "CPF/CNPJ já existentes")
 @Entity
 @Table(name =  "fornecedor")
 public class Fornecedor {

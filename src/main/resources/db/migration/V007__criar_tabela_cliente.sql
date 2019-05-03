@@ -4,7 +4,6 @@ CREATE TABLE IF NOT EXISTS cliente (
   email VARCHAR(50) NOT NULL UNIQUE,
   tipo_pessoa VARCHAR(15) NOT NULL,
   cpf_cnpj VARCHAR(20) UNIQUE,
-  username VARCHAR(150) NOT NULL UNIQUE,
   password VARCHAR(150) NOT NULL
 );
 

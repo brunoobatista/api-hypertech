@@ -4,7 +4,6 @@ import com.rancotech.tendtudo.event.RecursoCriadoEvent;
 import com.rancotech.tendtudo.model.Produto;
 import com.rancotech.tendtudo.repository.ProdutoRepository;
 import com.rancotech.tendtudo.repository.filter.ProdutoFilter;
-import com.rancotech.tendtudo.service.exception.BuscaValorNullException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -35,7 +34,7 @@ public class ProdutoResource {
 
     @GetMapping("/search/{valor}")
     public List<Produto> buscarTodos(@PathVariable String valor) {
-        return produtoRepository.findByNomeContainsOrderById(valor);
+        return produtoRepository.findByNomeContainsIgnoreCaseOrderById(valor);
     }
 
     @PostMapping
