@@ -1,5 +1,6 @@
 package com.rancotech.tendtudo.exceptionhandler;
 
+import com.rancotech.tendtudo.service.exception.BuscaValorNullException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -74,6 +75,14 @@ public class TendtudoExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({ NullPointerException.class })
     public ResponseEntity<Object> handleNullPointerException(Exception ex, WebRequest request) {
         String mensagemUsuario = messageSource.getMessage("token.invalido", null, LocaleContextHolder.getLocale());
+        String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
+        List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
+        return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler({ BuscaValorNullException.class })
+    public ResponseEntity<Object> handleBuscaValorNullException(Exception ex, WebRequest request) {
+        String mensagemUsuario = messageSource.getMessage("busca.null", null, LocaleContextHolder.getLocale());
         String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
         List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
         return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
