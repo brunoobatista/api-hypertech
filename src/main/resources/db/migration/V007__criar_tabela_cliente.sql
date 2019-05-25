@@ -6,7 +6,3 @@ CREATE TABLE IF NOT EXISTS cliente (
   cpf_cnpj VARCHAR(20) UNIQUE,
   password VARCHAR(150) NOT NULL
 );
-
-ALTER TABLE venda DROP COLUMN IF EXISTS cliente_id;
-ALTER TABLE venda ADD COLUMN IF NOT EXISTS cliente_id BIGINT;
-ALTER TABLE venda ADD CONSTRAINT cliente_id_fk FOREIGN KEY(cliente_id) REFERENCES cliente(id);

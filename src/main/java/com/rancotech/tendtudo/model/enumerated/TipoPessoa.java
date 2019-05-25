@@ -1,4 +1,4 @@
-package com.rancotech.tendtudo.model;
+package com.rancotech.tendtudo.model.enumerated;
 
 import com.rancotech.tendtudo.model.validation.group.CnpjGroup;
 import com.rancotech.tendtudo.model.validation.group.CpfGroup;

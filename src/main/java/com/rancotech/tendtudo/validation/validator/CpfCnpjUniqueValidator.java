@@ -1,6 +1,6 @@
 package com.rancotech.tendtudo.validation.validator;
 
-import com.rancotech.tendtudo.model.TipoPessoa;
+import com.rancotech.tendtudo.model.enumerated.TipoPessoa;
 import com.rancotech.tendtudo.repository.ClienteRepository;
 import com.rancotech.tendtudo.validation.CpfCnpjUnique;
 import org.apache.commons.beanutils.BeanUtils;

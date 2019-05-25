@@ -3,9 +3,12 @@ package com.rancotech.tendtudo.resource;
 import com.rancotech.tendtudo.event.RecursoCriadoEvent;
 import com.rancotech.tendtudo.model.Venda;
 import com.rancotech.tendtudo.repository.VendaRepository;
+import com.rancotech.tendtudo.repository.filter.VendaFilter;
 import com.rancotech.tendtudo.service.VendaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,9 +31,14 @@ public class VendaResource {
     @Autowired
     private ApplicationEventPublisher publisher;
 
-    @GetMapping
-    public List<Venda> listar() {
+    @GetMapping("/listar")
+    public List<Venda> findAll() {
         return vendaRepository.findAll();
+    }
+
+    @GetMapping
+    public Page<Venda> listar(VendaFilter vendaFilter, Pageable pageable) {
+        return vendaRepository.filtrar(vendaFilter, pageable);
     }
 
     @PostMapping
@@ -43,7 +51,7 @@ public class VendaResource {
 
     @GetMapping("/{id}")
     public ResponseEntity<Venda> buscarPorCodigo(@PathVariable Long id) {
-        Optional<Venda> venda = vendaRepository.findById(id);
+        Optional<Venda> venda = vendaService.findById(id);
         return venda.isPresent() ? ResponseEntity.ok(venda.get()) : ResponseEntity.notFound().build();
     }
 

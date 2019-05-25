@@ -1,5 +1,6 @@
 package com.rancotech.tendtudo.model;
 
+import com.rancotech.tendtudo.model.enumerated.TipoPessoa;
 import com.rancotech.tendtudo.model.validation.ClienteGroupSequenceProvider;
 import com.rancotech.tendtudo.validation.AtributosConfirmacao;
 import com.rancotech.tendtudo.validation.CpfCnpjUnique;
@@ -7,9 +8,7 @@ import org.hibernate.validator.group.GroupSequenceProvider;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @AtributosConfirmacao(atributo = "password", atributoConfirmacao = "confirmPassword", id = "id", message = "Confirmação da senha não confere")
@@ -38,7 +37,6 @@ public class Cliente {
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_pessoa")
     private TipoPessoa tipoPessoa;
-
 
     @NotEmpty
     @Column(name = "cpf_cnpj")

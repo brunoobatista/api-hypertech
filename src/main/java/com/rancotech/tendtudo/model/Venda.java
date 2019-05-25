@@ -2,6 +2,9 @@ package com.rancotech.tendtudo.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.rancotech.tendtudo.model.enumerated.StatusVenda;
+import com.rancotech.tendtudo.repository.ClienteRepository;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -15,6 +18,8 @@ import java.util.Objects;
 @Entity
 @Table(name = "venda")
 public class Venda {
+
+    private ClienteRepository clienteRepository;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,6 +48,38 @@ public class Venda {
 
     @Column(name="desconto")
     private BigDecimal desconto;
+
+    @Column(name = "cliente_id")
+    private Long clienteId;
+
+    @Transient
+    private String status;
+
+    @Transient
+    private List<StatusVenda> statusVenda;
+
+    @Transient
+    private Cliente cliente;
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public StatusVenda getStatusVenda() {
+        return statusVenda;
+    }
 
     public void addProduto(Produto produto, Integer quantidade) {
         VendaProduto vendaProduto = new VendaProduto(this, produto, quantidade);
@@ -119,6 +156,16 @@ public class Venda {
     public void setObservacao(String observacao) {
         this.observacao = observacao;
     }
+
+    public Long getClienteId() {
+        return clienteId;
+    }
+
+    public void setClienteId(Long clienteId) {
+        this.clienteId = clienteId;
+    }
+
+
 
     @Override
     public boolean equals(Object o) {
