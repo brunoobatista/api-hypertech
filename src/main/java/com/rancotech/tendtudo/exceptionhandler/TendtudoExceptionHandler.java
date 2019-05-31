@@ -1,5 +1,6 @@
 package com.rancotech.tendtudo.exceptionhandler;
 
+import com.rancotech.tendtudo.service.exception.AtualizarVendaException;
 import com.rancotech.tendtudo.service.exception.BuscaValorNullException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @ControllerAdvice
 public class TendtudoExceptionHandler extends ResponseEntityExceptionHandler {
@@ -56,6 +58,14 @@ public class TendtudoExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
+    @ExceptionHandler({ NoSuchElementException.class })
+    public ResponseEntity<Object> handleNoSuchElementException(NoSuchElementException ex, WebRequest request) {
+        String mensagemUsuario = messageSource.getMessage("recurso.vazio", null, LocaleContextHolder.getLocale());
+        String mensagemDesenvolvedor = ex.toString();
+        List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
+        return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    }
+
     @ExceptionHandler({ DataIntegrityViolationException.class })
     public ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request) {
         String mensagemUsuario = messageSource.getMessage("recurso.opecarao-nao-permitida", null, LocaleContextHolder.getLocale());
@@ -83,6 +93,14 @@ public class TendtudoExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({ BuscaValorNullException.class })
     public ResponseEntity<Object> handleBuscaValorNullException(Exception ex, WebRequest request) {
         String mensagemUsuario = messageSource.getMessage("busca.null", null, LocaleContextHolder.getLocale());
+        String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
+        List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
+        return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler({ AtualizarVendaException.class })
+    public ResponseEntity<Object> handleAtualizarVendaException(Exception ex, WebRequest request) {
+        String mensagemUsuario = messageSource.getMessage("busca.status-invalido", null, LocaleContextHolder.getLocale());
         String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
         List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
         return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);

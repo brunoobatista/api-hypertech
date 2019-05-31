@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -36,7 +37,6 @@ public class VendaService {
             vendaSalvo.setCliente(cliente.get());
         }
 
-
         this.vendaRepository.save(vendaSalvo);
 
         venda.getProdutos().forEach(p -> {
@@ -59,8 +59,21 @@ public class VendaService {
         return this.calculaValorTotalVenda(venda.get());
     }
 
+    @Transactional
+    public void remover(Long id) {
+        Optional<Venda> venda = this.vendaRepository.findById(id);
+        List<VendaProduto> vendaProdutos = venda.get().getProdutos();
+
+        vendaProdutos.forEach(vp -> {
+            this.removerProduto(venda.get().getId(), vp.getProduto().getId());
+        });
+
+        this.vendaRepository.delete(venda.get());
+    }
+
     public Optional<Venda> findById(Long id) {
         Optional<Venda> venda = this.vendaRepository.findById(id);
+
         if (venda.get().getClienteId() != null) {
             Optional<Cliente> cliente = this.clienteRepository.findById(venda.get().getClienteId());
             venda.get().setCliente(cliente.get());

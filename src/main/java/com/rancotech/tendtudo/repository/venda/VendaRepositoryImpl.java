@@ -1,6 +1,7 @@
 package com.rancotech.tendtudo.repository.venda;
 
 import com.rancotech.tendtudo.model.Venda;
+import com.rancotech.tendtudo.model.enumerated.StatusVenda;
 import com.rancotech.tendtudo.repository.filter.VendaFilter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -14,8 +15,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class VendaRepositoryImpl implements VendaRepositoryQuery {
 
@@ -29,7 +29,6 @@ public class VendaRepositoryImpl implements VendaRepositoryQuery {
         Root<Venda> root = criteria.from(Venda.class);
 
         Predicate[] predicates = criarRestricoes(vendaFilter, builder, root);
-        //criteria.multiselect(root.get("id"), root.get("data_venda"), root.get("status"), root.get("valor"));
 
         criteria.where(predicates);
 
@@ -39,7 +38,17 @@ public class VendaRepositoryImpl implements VendaRepositoryQuery {
 
         adicionarRestricoesDePaginacao(query, pageable);
 
-        return new PageImpl<>(query.getResultList(), pageable, total(vendaFilter));
+        Map<StatusVenda, String> status = new HashMap<>();
+
+        List<Object> values = new ArrayList<>();
+
+        for (StatusVenda value : StatusVenda.values()) {
+            status.put(value, value.getDescricao());
+        }
+        values.add(query.getResultList());
+        values.add(status);
+
+        return new PageImpl<>((List)values, pageable, total(vendaFilter));
     }
 
     private Predicate[] criarRestricoes(VendaFilter vendaFilter, CriteriaBuilder builder,

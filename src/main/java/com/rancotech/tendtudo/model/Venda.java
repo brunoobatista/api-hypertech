@@ -10,23 +10,18 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Table(name = "venda")
 public class Venda {
-
-    private ClienteRepository clienteRepository;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name="data_venda")
-    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime dataVenda;
 
     @Column(name="valor")
@@ -52,11 +47,8 @@ public class Venda {
     @Column(name = "cliente_id")
     private Long clienteId;
 
-    @Transient
+    @Column(name = "status")
     private String status;
-
-    @Transient
-    private List<StatusVenda> statusVenda;
 
     @Transient
     private Cliente cliente;
@@ -75,10 +67,6 @@ public class Venda {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public StatusVenda getStatusVenda() {
-        return statusVenda;
     }
 
     public void addProduto(Produto produto, Integer quantidade) {
