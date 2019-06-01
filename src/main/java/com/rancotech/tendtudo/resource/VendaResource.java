@@ -56,6 +56,7 @@ public class VendaResource {
 
     @PostMapping("/finalizar")
     public ResponseEntity<Venda> salvarFinalizar(@Valid @RequestBody Venda venda, HttpServletResponse response) {
+        System.out.println("teste "  + venda.getId() + " #$#$ " + venda.getStatus());
         if (venda.getStatus().equalsIgnoreCase(StatusVenda.ABERTA.toString())) {
             venda.setStatus(StatusVenda.FINALIZADA.toString());
             return ResponseEntity.status(HttpStatus.CREATED).body(this.salvar(venda, response));

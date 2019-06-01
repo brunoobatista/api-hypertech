@@ -13,7 +13,12 @@ public class Permissao {
     private Long id;
 
     @NotEmpty(message = "Descrição obrigatória")
-    private String descricao;
+    @Column(name = "nome")
+    private String nome;
+
+    @NotEmpty(message = "Descrição obrigatória")
+    @Column(name = "funcao")
+    private String funcao;
 
     public Long getId() {
         return id;
@@ -23,12 +28,20 @@ public class Permissao {
         this.id = id;
     }
 
-    public String getDescricao() {
-        return descricao;
+    public String getNome() {
+        return nome;
     }
 
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getFuncao() {
+        return funcao;
+    }
+
+    public void setFuncao(String funcao) {
+        this.funcao = funcao;
     }
 
     @Override

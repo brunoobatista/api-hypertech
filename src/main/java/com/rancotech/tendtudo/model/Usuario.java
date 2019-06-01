@@ -1,6 +1,7 @@
 package com.rancotech.tendtudo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.validator.constraints.br.CPF;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -29,6 +30,9 @@ public class Usuario {
 
     @NotEmpty
     private String username;
+
+    @CPF
+    private String cpf;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "usuario_permissao", joinColumns = @JoinColumn(name = "usuario_id"),
@@ -81,6 +85,14 @@ public class Usuario {
 
     public void setPermissoes(List<Permissao> permissoes) {
         this.permissoes = permissoes;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     @Override

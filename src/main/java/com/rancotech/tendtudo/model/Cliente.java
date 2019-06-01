@@ -38,19 +38,20 @@ public class Cliente {
     @Column(name = "tipo_pessoa")
     private TipoPessoa tipoPessoa;
 
-    @NotEmpty
     @Column(name = "cpf_cnpj")
     private String cpfCnpj;
 
     @PrePersist @PreUpdate
     private void prePersistPreUpdate() {
-        this.cpfCnpj = TipoPessoa.removerFormatacao(this.cpfCnpj);
+        if (!this.cpfCnpj.isEmpty())
+            this.cpfCnpj = TipoPessoa.removerFormatacao(this.cpfCnpj);
     }
 
     @PostLoad
     @PostUpdate
     private void postLoad() {
-        this.cpfCnpj = this.tipoPessoa.formatar(this.cpfCnpj);
+        if (!this.cpfCnpj.isEmpty())
+            this.cpfCnpj = this.tipoPessoa.formatar(this.cpfCnpj);
     }
 
     public String getConfirmPassword() {
