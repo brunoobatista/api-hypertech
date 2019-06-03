@@ -28,6 +28,7 @@ public class FornecedorResource {
     private ApplicationEventPublisher publisher;
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('READ_PRODUTO', 'FULL_PRODUTO')")
     public Page<Fornecedor> listar(FornecedorFilter fornecedorFilter, Pageable pageable) {
         return fornecedorRepository.filtrar(fornecedorFilter, pageable);
     }

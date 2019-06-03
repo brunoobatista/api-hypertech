@@ -1,16 +1,19 @@
 package com.rancotech.tendtudo.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.validator.constraints.br.CPF;
+import com.rancotech.tendtudo.model.enumerated.TipoPessoa;
+import com.rancotech.tendtudo.validation.CpfCnpjUnique;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
-import java.util.List;
+import java.util.Collection;
 import java.util.Objects;
 
 @Entity
 @Table(name = "usuario")
+@CpfCnpjUnique(cpfCnpj = "cpf", id = "id", message = "CPF já existentes")
 public class Usuario {
 
     @Id
@@ -24,20 +27,44 @@ public class Usuario {
     @NotEmpty
     private String email;
 
-    @NotEmpty
-    @JsonIgnore
+    @Column(name = "password")
     private String password;
 
     @NotEmpty
     private String username;
 
-    @CPF
+    @Column(name = "ativo")
+    private Integer ativo;
+
+    @Transient
+    private String confirmPassword;
+
     private String cpf;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "usuario_permissao", joinColumns = @JoinColumn(name = "usuario_id"),
-        inverseJoinColumns = @JoinColumn(name = "permissao_id"))
-    private List<Permissao> permissoes;
+    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SUBSELECT)
+    @JoinTable(name = "usuarios_roles",
+        joinColumns = @JoinColumn(
+            name = "usuario_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(
+            name = "role_id", referencedColumnName = "id"))
+    private Collection<Role> roles;
+
+    @PrePersist @PreUpdate
+    private void prePersistPreUpdate() {
+        if (this.cpf.isEmpty()) {
+            this.cpf = null;
+        } else {
+            this.cpf = TipoPessoa.removerFormatacao(this.cpf);
+        }
+    }
+
+    @PostLoad
+    @PostUpdate
+    private void postLoad() {
+        if (this.cpf != null && !this.cpf.isEmpty())
+            this.cpf = TipoPessoa.formatarCpf(this.cpf);
+    }
 
     public Long getId() {
         return id;
@@ -71,6 +98,14 @@ public class Usuario {
         this.password = password;
     }
 
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
+    }
+
     public String getUsername() {
         return username;
     }
@@ -79,12 +114,12 @@ public class Usuario {
         this.username = username;
     }
 
-    public List<Permissao> getPermissoes() {
-        return permissoes;
+    public Collection<Role> getRoles() {
+        return roles;
     }
 
-    public void setPermissoes(List<Permissao> permissoes) {
-        this.permissoes = permissoes;
+    public void setRoles(Collection<Role> roles) {
+        this.roles = roles;
     }
 
     public String getCpf() {
@@ -93,6 +128,14 @@ public class Usuario {
 
     public void setCpf(String cpf) {
         this.cpf = cpf;
+    }
+
+    public Integer getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(Integer ativo) {
+        this.ativo = ativo;
     }
 
     @Override

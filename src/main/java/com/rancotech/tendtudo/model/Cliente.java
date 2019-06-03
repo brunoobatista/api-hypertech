@@ -2,7 +2,6 @@ package com.rancotech.tendtudo.model;
 
 import com.rancotech.tendtudo.model.enumerated.TipoPessoa;
 import com.rancotech.tendtudo.model.validation.ClienteGroupSequenceProvider;
-import com.rancotech.tendtudo.validation.AtributosConfirmacao;
 import com.rancotech.tendtudo.validation.CpfCnpjUnique;
 import org.hibernate.validator.group.GroupSequenceProvider;
 
@@ -11,7 +10,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import java.util.Objects;
 
-@AtributosConfirmacao(atributo = "password", atributoConfirmacao = "confirmPassword", id = "id", message = "Confirmação da senha não confere")
 @CpfCnpjUnique(cpfCnpj = "cpfCnpj", id = "id", message = "CPF/CNPJ já existentes")
 @Entity
 @Table(name = "cliente")
@@ -41,16 +39,25 @@ public class Cliente {
     @Column(name = "cpf_cnpj")
     private String cpfCnpj;
 
+    @Column(name = "confirmado")
+    private boolean confirmado;
+
+    @Column(name = "ativo")
+    private Integer ativo;
+
     @PrePersist @PreUpdate
     private void prePersistPreUpdate() {
-        if (!this.cpfCnpj.isEmpty())
+        if (this.cpfCnpj.isEmpty()) {
+            this.cpfCnpj = null;
+        } else {
             this.cpfCnpj = TipoPessoa.removerFormatacao(this.cpfCnpj);
+        }
     }
 
     @PostLoad
     @PostUpdate
     private void postLoad() {
-        if (!this.cpfCnpj.isEmpty())
+        if (this.cpfCnpj != null && !this.cpfCnpj.isEmpty())
             this.cpfCnpj = this.tipoPessoa.formatar(this.cpfCnpj);
     }
 
@@ -109,6 +116,22 @@ public class Cliente {
 
     public void setTipoPessoa(TipoPessoa tipoPessoa) {
         this.tipoPessoa = tipoPessoa;
+    }
+
+    public boolean isConfirmado() {
+        return confirmado;
+    }
+
+    public void setConfirmado(boolean confirmado) {
+        this.confirmado = confirmado;
+    }
+
+    public Integer getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(Integer ativo) {
+        this.ativo = ativo;
     }
 
     @Override

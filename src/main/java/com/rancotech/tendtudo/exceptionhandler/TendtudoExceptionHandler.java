@@ -2,6 +2,8 @@ package com.rancotech.tendtudo.exceptionhandler;
 
 import com.rancotech.tendtudo.service.exception.AtualizarVendaException;
 import com.rancotech.tendtudo.service.exception.BuscaValorNullException;
+import com.rancotech.tendtudo.service.exception.SenhaConfirmacaoException;
+import com.rancotech.tendtudo.service.exception.SenhaObrigatoriaException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -101,6 +103,22 @@ public class TendtudoExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({ AtualizarVendaException.class })
     public ResponseEntity<Object> handleAtualizarVendaException(Exception ex, WebRequest request) {
         String mensagemUsuario = messageSource.getMessage("busca.status-invalido", null, LocaleContextHolder.getLocale());
+        String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
+        List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
+        return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler({ SenhaConfirmacaoException.class })
+    public ResponseEntity<Object> handleSenhaConfirmacaoException(Exception ex, WebRequest request) {
+        String mensagemUsuario = messageSource.getMessage("senha.incorreta", null, LocaleContextHolder.getLocale());
+        String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
+        List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
+        return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler({ SenhaObrigatoriaException.class })
+    public ResponseEntity<Object> handleSenhaObrigatoria(Exception ex, WebRequest request) {
+        String mensagemUsuario = messageSource.getMessage("senha.obrigatoria", null, LocaleContextHolder.getLocale());
         String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
         List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
         return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);

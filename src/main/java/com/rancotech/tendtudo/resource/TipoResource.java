@@ -28,13 +28,13 @@ public class TipoResource {
 	private ApplicationEventPublisher publisher;
 
 	@GetMapping
-	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_TIPO')")
+	@PreAuthorize("hasAnyAuthority('READ_PRODUTO', 'FULL_PRODUTO')")
 	public Page<Tipo> listar(TipoFilter tipoFilter, Pageable pageable) {
 		return tipoRepository.filtrar(tipoFilter, pageable);
 	}
 	
 	@PostMapping
-	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_TIPO')")
+	@PreAuthorize("hasAnyAuthority('WRITE_PRODUTO', 'FULL_PRODUTO')")
 	public ResponseEntity<Tipo> criar(@Valid @RequestBody Tipo tipo, HttpServletResponse response) {
 		Tipo tipoSalvo = tipoRepository.save(tipo);
 
@@ -44,14 +44,14 @@ public class TipoResource {
 	}
 
 	@GetMapping("/{id}")
-	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_TIPO')")
+	@PreAuthorize("hasAnyAuthority('READ_PRODUTO', 'FULL_PRODUTO')")
 	public ResponseEntity<Tipo> buscarPorCodigo(@PathVariable Long id) {
 		Optional<Tipo> tipo = tipoRepository.findById(id);
 		return tipo.isPresent() ? ResponseEntity.ok(tipo.get()) : ResponseEntity.notFound().build();
 	}
 
 	@DeleteMapping("/{id}")
-	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_TIPO')")
+	@PreAuthorize("hasAnyAuthority('FULL_PRODUTO')")
 	//@ResponseStatus(HttpStatus.NO_CONTENT)
 	public ResponseEntity<Object> remover(@PathVariable Long id) {
 		tipoRepository.deleteById(id);

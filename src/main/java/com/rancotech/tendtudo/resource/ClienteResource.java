@@ -11,10 +11,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.tags.Param;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +35,7 @@ public class ClienteResource {
     private ApplicationEventPublisher publisher;
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('READ_CLIENTE', 'FULL_CLIENTE')")
     public Page<Cliente> listar(ClienteFilter clienteFilter, Pageable pageable) {
         return clienteRepository.filtrar(clienteFilter, pageable);
     }
@@ -57,10 +61,16 @@ public class ClienteResource {
         return cliente.isPresent() ? ResponseEntity.ok(cliente.get()) : ResponseEntity.notFound().build();
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/only/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void remover(@PathVariable Long id) {
-        clienteRepository.deleteById(id);
+    public void removerById(@PathVariable Long id) {
+        this.clienteRepository.deleteById(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Cliente> remover(@PathVariable Long id, Pageable pageable) {
+        Cliente cliente = clienteService.remover(id, pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(cliente);
     }
 
 }
