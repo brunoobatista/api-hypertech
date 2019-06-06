@@ -35,7 +35,7 @@ public class TipoResource {
 	}
 
 	@GetMapping("/search/")
-    @PreAuthorize("hasAnyAuthority('READ_PRODUTO', 'FULL_PRODUTO')")
+    @PreAuthorize("hasAnyAuthority('READ_PRODUTO', 'WRITE_PRODUTO', 'FULL_PRODUTO')")
 	public List<Tipo> buscarTodos() {
 		String valor = "";
 		return tipoRepository.filtrarPorTipo(valor);

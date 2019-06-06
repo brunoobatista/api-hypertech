@@ -1,6 +1,7 @@
 package com.rancotech.tendtudo.service;
 
 import com.rancotech.tendtudo.model.Usuario;
+import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
 import com.rancotech.tendtudo.repository.UsuarioRepository;
 import com.rancotech.tendtudo.service.exception.SenhaConfirmacaoException;
 import com.rancotech.tendtudo.service.exception.UsernameObrigatorioException;
@@ -28,6 +29,7 @@ public class UsuarioService {
 
     public Usuario salvar(Usuario usuario) {
         Usuario usuarioVerificado = this.verificarPassword(usuario);
+        usuarioVerificado.setAtivo(StatusAtivo.ATIVADO);
         //usuarioRepository.save(usuarioVerificado);
         usuarioRepository.saveAndFlush(usuarioVerificado);
         return usuarioVerificado;

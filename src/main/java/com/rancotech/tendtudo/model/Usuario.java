@@ -2,6 +2,7 @@ package com.rancotech.tendtudo.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
 import com.rancotech.tendtudo.model.enumerated.TipoPessoa;
 import com.rancotech.tendtudo.validation.CpfCnpjUnique;
 import org.hibernate.annotations.Fetch;
@@ -29,14 +30,14 @@ public class Usuario {
     @NotEmpty
     private String email;
 
-    @JsonIgnore
     @Column(name = "password")
     private String password;
 
     private String username;
 
     @Column(name = "ativo")
-    private Integer ativo;
+    @Enumerated
+    private StatusAtivo ativo;
 
     @Transient
     private String confirmPassword;
@@ -132,11 +133,11 @@ public class Usuario {
         this.cpf = cpf;
     }
 
-    public Integer getAtivo() {
+    public StatusAtivo getAtivo() {
         return ativo;
     }
 
-    public void setAtivo(Integer ativo) {
+    public void setAtivo(StatusAtivo ativo) {
         this.ativo = ativo;
     }
 
