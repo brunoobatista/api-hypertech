@@ -41,8 +41,11 @@ public enum TipoPessoa {
     public abstract String formatar(String cpfOuCnpj);
 
     public static String formatarCpf(String cpf) {
-
         return TipoPessoa.FISICA.formatar(cpf);
+    }
+
+    public static String formatarCnpj(String cnpj) {
+        return TipoPessoa.JURIDICA.formatar(cnpj);
     }
 
     public String getDescricao() {

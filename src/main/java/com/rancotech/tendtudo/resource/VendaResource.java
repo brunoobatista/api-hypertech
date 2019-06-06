@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -35,28 +36,27 @@ public class VendaResource {
     private ApplicationEventPublisher publisher;
 
     @GetMapping("/listar")
+    @PreAuthorize("hasAnyAuthority('READ_VENDA', 'FULL_VENDA')")
     public List<Venda> findAll() {
         return vendaRepository.findAll();
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('READ_VENDA', 'FULL_VENDA')")
     public Page<Venda> listar(VendaFilter vendaFilter, Pageable pageable) {
         return vendaRepository.filtrar(vendaFilter, pageable);
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('WRITE_VENDA', 'FULL_VENDA')")
     public ResponseEntity<Venda> salvarEmAberto(@Valid @RequestBody Venda venda, HttpServletResponse response) {
-        if (venda.getStatus().equalsIgnoreCase(StatusVenda.ABERTA.toString())) {
-            venda.setStatus(StatusVenda.ABERTA.toString());
-            return ResponseEntity.status(HttpStatus.CREATED).body(this.salvar(venda, response));
-        } else {
-            throw new AtualizarVendaException();
-        }
+        venda.setStatus(StatusVenda.ABERTA.toString());
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.salvar(venda, response));
     }
 
     @PostMapping("/finalizar")
+    @PreAuthorize("hasAnyAuthority('WRITE_VENDA', 'FULL_VENDA')")
     public ResponseEntity<Venda> salvarFinalizar(@Valid @RequestBody Venda venda, HttpServletResponse response) {
-        System.out.println("teste "  + venda.getId() + " #$#$ " + venda.getStatus());
         if (venda.getStatus().equalsIgnoreCase(StatusVenda.ABERTA.toString())) {
             venda.setStatus(StatusVenda.FINALIZADA.toString());
             return ResponseEntity.status(HttpStatus.CREATED).body(this.salvar(venda, response));
@@ -66,6 +66,7 @@ public class VendaResource {
     }
 
     @PostMapping("/cancelar")
+    @PreAuthorize("hasAnyAuthority('WRITE_VENDA', 'FULL_VENDA')")
     public ResponseEntity<Venda> cancelar(@Valid @RequestBody Venda venda, HttpServletResponse response) {
         if (venda.getStatus().equalsIgnoreCase(StatusVenda.ABERTA.toString())) {
             venda.setStatus(StatusVenda.CANCELADA.toString());
@@ -76,6 +77,7 @@ public class VendaResource {
     }
 
     @PutMapping("/estornar")
+    @PreAuthorize("hasAnyAuthority('WRITE_VENDA', 'FULL_VENDA')")
     public ResponseEntity<Venda> estornar(@Valid @RequestBody Venda venda) {
         if (venda.getStatus().equalsIgnoreCase(StatusVenda.FINALIZADA.toString())) {
             venda.setStatus(StatusVenda.ESTORNADA.toString());
@@ -88,18 +90,21 @@ public class VendaResource {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('READ_VENDA', 'FULL_VENDA')")
     public ResponseEntity<Venda> buscarPorCodigo(@PathVariable Long id) {
         Optional<Venda> venda = vendaService.findById(id);
         return venda.isPresent() ? ResponseEntity.ok(venda.get()) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('WRITE_VENDA', 'FULL_VENDA')")
     public ResponseEntity<Void> remover(@PathVariable Long id) {
         this.vendaService.remover(id);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{vendaId}/{produtoId}")
+    @PreAuthorize("hasAnyAuthority('WRITE_VENDA', 'FULL_VENDA')")
     public ResponseEntity<Venda> removerProduto(@PathVariable(name = "vendaId") Long vendaId, @PathVariable(name = "produtoId") Long produtoId) {
         Venda venda = this.vendaService.removerProduto(vendaId, produtoId);
 

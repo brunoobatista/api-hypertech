@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -38,41 +39,56 @@ public class UsuarioResource {
     private ApplicationEventPublisher publisher;
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('READ_USUARIO', 'FULL_USUARIO')")
     public Page<Usuario> listar(UsuarioFilter usuarioFilter, Pageable pageable) {
         return this.usuarioRepository.filtrar(usuarioFilter, pageable);
     }
 
     @GetMapping("/search/{valor}")
+    @PreAuthorize("hasAnyAuthority('READ_USUARIO', 'FULL_USUARIO')")
     public List<Usuario> procurarUsuario(@PathVariable String valor) {
 
         return this.usuarioRepository.findByNomeContainsIgnoreCase(valor);
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('WRITE_USUARIO', 'FULL_USUARIO')")
     public ResponseEntity<Usuario> salvar(@Valid @RequestBody Usuario usuario, HttpServletResponse response) {
         Usuario usuarioSalvo = this.usuarioService.salvar(usuario);
         this.publisher.publishEvent(new RecursoCriadoEvent(this, response, usuarioSalvo.getId()));
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioSalvo);
     }
 
+    @PostMapping("/edit")
+    @PreAuthorize("hasAnyAuthority('WRITE_USUARIO', 'FULL_USUARIO')")
+    public ResponseEntity<Usuario> editar(@Valid @RequestBody Usuario usuario, HttpServletResponse response) {
+        Usuario usuarioSalvo = this.usuarioService.editar(usuario);
+        this.publisher.publishEvent(new RecursoCriadoEvent(this, response, usuarioSalvo.getId()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioSalvo);
+    }
+
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('READ_USUARIO', 'FULL_USUARIO')")
     public ResponseEntity<Usuario> buscarPorCódigo(@PathVariable Long id) {
         Optional<Usuario> usuario = usuarioRepository.findById(id);
         return usuario.isPresent() ? ResponseEntity.ok(usuario.get()) : ResponseEntity.notFound().build();
     }
 
     @GetMapping("/permissoes")
+    @PreAuthorize("hasAnyAuthority('READ_USUARIO', 'FULL_USUARIO')")
     public List<Role> listarPermissoes() {
         return this.roleRepository.findAllByNomeNotContains("ROOT");
     }
 
     @DeleteMapping("/only/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasAnyAuthority('WRITE_USUARIO', 'FULL_USUARIO')")
     public void removerById(@PathVariable Long id) {
         this.usuarioRepository.deleteById(id);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('WRITE_USUARIO', 'FULL_USUARIO')")
     public ResponseEntity<Usuario> remover(@PathVariable Long id, Pageable pageable) {
         Usuario usuario = usuarioService.remover(id, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(usuario);

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -28,9 +29,22 @@ public class TipoResource {
 	private ApplicationEventPublisher publisher;
 
 	@GetMapping
-	@PreAuthorize("hasAnyAuthority('READ_PRODUTO', 'FULL_PRODUTO')")
+    @PreAuthorize("hasAnyAuthority('READ_PRODUTO', 'FULL_PRODUTO')")
 	public Page<Tipo> listar(TipoFilter tipoFilter, Pageable pageable) {
 		return tipoRepository.filtrar(tipoFilter, pageable);
+	}
+
+	@GetMapping("/search/")
+    @PreAuthorize("hasAnyAuthority('READ_PRODUTO', 'FULL_PRODUTO')")
+	public List<Tipo> buscarTodos() {
+		String valor = "";
+		return tipoRepository.filtrarPorTipo(valor);
+	}
+
+	@GetMapping("/search/{valor}")
+    @PreAuthorize("hasAnyAuthority('READ_PRODUTO', 'FULL_PRODUTO')")
+	public List<Tipo> buscarTodosSearch(@PathVariable String valor) {
+		return tipoRepository.filtrarPorTipo(valor);
 	}
 	
 	@PostMapping
@@ -44,14 +58,14 @@ public class TipoResource {
 	}
 
 	@GetMapping("/{id}")
-	@PreAuthorize("hasAnyAuthority('READ_PRODUTO', 'FULL_PRODUTO')")
+    @PreAuthorize("hasAnyAuthority('READ_PRODUTO', 'FULL_PRODUTO')")
 	public ResponseEntity<Tipo> buscarPorCodigo(@PathVariable Long id) {
 		Optional<Tipo> tipo = tipoRepository.findById(id);
 		return tipo.isPresent() ? ResponseEntity.ok(tipo.get()) : ResponseEntity.notFound().build();
 	}
 
 	@DeleteMapping("/{id}")
-	@PreAuthorize("hasAnyAuthority('FULL_PRODUTO')")
+	@PreAuthorize("hasAnyAuthority('WRITE_PRODUTO', 'FULL_PRODUTO')")
 	//@ResponseStatus(HttpStatus.NO_CONTENT)
 	public ResponseEntity<Object> remover(@PathVariable Long id) {
 		tipoRepository.deleteById(id);

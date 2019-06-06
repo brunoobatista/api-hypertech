@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -28,16 +29,19 @@ public class ProdutoResource {
     private ApplicationEventPublisher publisher;
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('READ_PRODUTO', 'FULL_PRODUTO')")
     public Page<Produto> listar(ProdutoFilter filter, Pageable pageable) {
         return produtoRepository.filtrar(filter, pageable);
     }
 
     @GetMapping("/search/{valor}")
+    @PreAuthorize("hasAnyAuthority('READ_PRODUTO', 'FULL_PRODUTO')")
     public List<Produto> buscarTodos(@PathVariable String valor) {
         return produtoRepository.findByNomeContainsIgnoreCaseOrderById(valor);
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('WRITE_PRODUTO', 'FULL_PRODUTO')")
     public ResponseEntity<Produto> salvar(@Valid @RequestBody Produto produto, HttpServletResponse response) {
         Produto produtoSalvo = produtoRepository.save(produto);
 
@@ -47,12 +51,14 @@ public class ProdutoResource {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('READ_PRODUTO', 'FULL_PRODUTO')")
     public ResponseEntity<Produto> buscarPorCodigo(@PathVariable Long id) {
         Optional<Produto> produto = produtoRepository.findById(id);
         return produto.isPresent() ? ResponseEntity.ok(produto.get()) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('WRITE_PRODUTO', 'FULL_PRODUTO')")
     public ResponseEntity<Void> remover(@PathVariable Long id) {
         produtoRepository.deleteById(id);
         return ResponseEntity.noContent().build();

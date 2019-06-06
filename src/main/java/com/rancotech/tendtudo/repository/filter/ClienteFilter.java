@@ -5,6 +5,15 @@ public class ClienteFilter {
     private String nome;
     private String email;
     private String cpfCnpj;
+    private String tipoPessoa;
+
+    public String getTipoPessoa() {
+        return tipoPessoa;
+    }
+
+    public void setTipoPessoa(String tipoPessoa) {
+        this.tipoPessoa = tipoPessoa;
+    }
 
     public String getNome() {
         return nome;

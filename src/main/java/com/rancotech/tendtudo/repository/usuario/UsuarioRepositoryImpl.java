@@ -45,8 +45,23 @@ public class UsuarioRepositoryImpl implements UsuarioRepositoryQuery {
         List<Predicate> predicates = new ArrayList<>();
 
         if (!StringUtils.isEmpty(usuarioFilter.getNome())) {
-            predicates.add(builder.like(
-                    builder.lower(root.get("nome")), "%" + usuarioFilter.getNome().toLowerCase() + "%"));
+            Predicate p1 = builder.like(
+                    builder.lower(root.get("nome")), "%" + usuarioFilter.getNome().toLowerCase() + "%"
+            );
+
+            Predicate p2 = builder.like(
+                    builder.lower(root.get("email")), "%" + usuarioFilter.getNome().toLowerCase() + "%"
+            );
+
+            Predicate p3 = builder.like(
+                    builder.lower(root.get("username")), "%" + usuarioFilter.getNome().toLowerCase() + "%"
+            );
+
+            Predicate p4 = builder.like(
+                    builder.lower(root.get("cpf")), "%" + usuarioFilter.getNome().toLowerCase() + "%"
+            );
+
+            predicates.add(builder.or(p1, p2, p3, p4));
         }
 
         int size = predicates.size();

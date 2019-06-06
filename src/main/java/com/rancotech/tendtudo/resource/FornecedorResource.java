@@ -28,12 +28,13 @@ public class FornecedorResource {
     private ApplicationEventPublisher publisher;
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('READ_PRODUTO', 'FULL_PRODUTO')")
+    @PreAuthorize("hasAnyAuthority('READ_FORNECEDOR', 'FULL_FORNECEDOR')")
     public Page<Fornecedor> listar(FornecedorFilter fornecedorFilter, Pageable pageable) {
         return fornecedorRepository.filtrar(fornecedorFilter, pageable);
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('WRITE_FORNECEDOR', 'FULL_FORNECEDOR')")
     public ResponseEntity<Fornecedor> criar(@Valid @RequestBody Fornecedor fornecedor, HttpServletResponse response) {
         Fornecedor fornecedorSalvo = fornecedorRepository.save(fornecedor);
 
@@ -43,14 +44,14 @@ public class FornecedorResource {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_TIPO')")
+    @PreAuthorize("hasAnyAuthority('READ_FORNECEDOR', 'FULL_FORNECEDOR')")
     public ResponseEntity<Fornecedor> buscarPorCodigo(@PathVariable Long id) {
         Optional<Fornecedor> fornecedor = fornecedorRepository.findById(id);
         return fornecedor.isPresent() ? ResponseEntity.ok(fornecedor.get()) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_CADASTRAR_TIPO')")
+    @PreAuthorize("hasAnyAuthority('WRITE_FORNECEDOR', 'FULL_FORNECEDOR')")
     //@ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> remover(@PathVariable Long id) {
         fornecedorRepository.deleteById(id);

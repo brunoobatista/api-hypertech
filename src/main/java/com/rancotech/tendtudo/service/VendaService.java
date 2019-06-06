@@ -59,6 +59,7 @@ public class VendaService {
         return this.calculaValorTotalVenda(venda.get());
     }
 
+    /* Método não sendo utilizado  */
     @Transactional
     public void remover(Long id) {
         Optional<Venda> venda = this.vendaRepository.findById(id);

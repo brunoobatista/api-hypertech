@@ -23,7 +23,7 @@ public class VendaProduto {
     private Venda venda;
 
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("produtoId")
     private Produto produto;
 

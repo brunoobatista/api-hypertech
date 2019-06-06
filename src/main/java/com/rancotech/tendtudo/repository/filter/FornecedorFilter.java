@@ -5,6 +5,15 @@ public class FornecedorFilter {
     private String nome;
     private String nome_fantasia;
     private String cpfOuCnpj;
+    private String valorDeBusca;
+
+    public String getValorDeBusca() {
+        return valorDeBusca;
+    }
+
+    public void setValorDeBusca(String valorDeBusca) {
+        this.valorDeBusca = valorDeBusca;
+    }
 
     public String getNome() {
         return nome;

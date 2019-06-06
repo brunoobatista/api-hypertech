@@ -23,6 +23,25 @@ public class TipoRepositoryImpl implements TipoRepositoryQuery {
     private EntityManager manager;
 
     @Override
+    public List<Tipo> filtrarPorTipo(String valor) {
+        CriteriaBuilder builder = manager.getCriteriaBuilder();
+        CriteriaQuery<Tipo> criteria = builder.createQuery(Tipo.class);
+        Root<Tipo> root = criteria.from(Tipo.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        if (!StringUtils.isEmpty(valor)) {
+            predicates.add(builder.like(
+                    builder.lower(root.get("tipo")), "%" + valor.toLowerCase() + "%"));
+            criteria.where(predicates.toArray(new Predicate[predicates.size()]));
+        }
+        criteria.orderBy(builder.asc(root.get("id")));
+
+        TypedQuery<Tipo> query = manager.createQuery(criteria);
+        return query.getResultList();
+    }
+
+    @Override
     public Page<Tipo> filtrar(TipoFilter tipoFilter, Pageable pageable) {
         CriteriaBuilder builder = manager.getCriteriaBuilder();
         CriteriaQuery<Tipo> criteria = builder.createQuery(Tipo.class);
@@ -46,9 +65,9 @@ public class TipoRepositoryImpl implements TipoRepositoryQuery {
                                         Root<Tipo> root) {
         List<Predicate> predicates = new ArrayList<>();
 
-        if (!StringUtils.isEmpty(tipoFilter.getTipo())) {
+        if (!StringUtils.isEmpty(tipoFilter.getNome())) {
             predicates.add(builder.like(
-                    builder.lower(root.get("tipo")), "%" + tipoFilter.getTipo().toLowerCase() + "%"));
+                    builder.lower(root.get("nome")), "%" + tipoFilter.getNome().toLowerCase() + "%"));
         }
 
         return predicates.toArray(new Predicate[predicates.size()]);

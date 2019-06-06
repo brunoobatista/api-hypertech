@@ -3,6 +3,7 @@ package com.rancotech.tendtudo.service;
 import com.rancotech.tendtudo.model.Usuario;
 import com.rancotech.tendtudo.repository.UsuarioRepository;
 import com.rancotech.tendtudo.service.exception.SenhaConfirmacaoException;
+import com.rancotech.tendtudo.service.exception.UsernameObrigatorioException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -32,9 +33,24 @@ public class UsuarioService {
         return usuarioVerificado;
     }
 
+    public Usuario editar(Usuario usuario) {
+        Usuario usuarioSalvo = this.usuarioRepository.findById(usuario.getId()).get();
+
+        usuarioSalvo.setEmail(usuario.getEmail());
+        usuarioSalvo.setNome(usuario.getNome());
+        usuarioSalvo.setCpf(usuario.getCpf() != null ? usuario.getCpf() : "");
+        usuarioSalvo.setRoles(usuario.getRoles());
+        this.usuarioRepository.saveAndFlush(usuarioSalvo);
+        return usuarioSalvo;
+    }
+
     private Usuario verificarPassword(Usuario usuario) {
         Object password = usuario.getPassword();
         Object passwordConfirmacao = usuario.getConfirmPassword();
+
+        if (usuario.getUsername() == null || usuario.getUsername().isEmpty()) {
+            throw new UsernameObrigatorioException();
+        }
 
         if (password != null && passwordConfirmacao != null &&
                 password.equals(passwordConfirmacao)) {

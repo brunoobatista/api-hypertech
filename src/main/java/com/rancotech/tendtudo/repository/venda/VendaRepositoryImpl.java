@@ -15,6 +15,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class VendaRepositoryImpl implements VendaRepositoryQuery {
@@ -57,8 +59,18 @@ public class VendaRepositoryImpl implements VendaRepositoryQuery {
 
         if (!StringUtils.isEmpty(vendaFilter.getVendaDe())) {
             predicates.add(builder.greaterThanOrEqualTo(
-                    root.get("data_venda"), vendaFilter.getVendaDe())
+                    root.<LocalDateTime>get("dataVenda"), vendaFilter.getVendaDe())
             );
+        }
+        if (!StringUtils.isEmpty(vendaFilter.getVendaAte())) {
+            predicates.add(builder.lessThanOrEqualTo(
+                    root.<LocalDateTime>get("dataVenda"), vendaFilter.getVendaAte())
+            );
+        }
+        if (!StringUtils.isEmpty(vendaFilter.getClienteId())) {
+            predicates.add(builder.equal(
+                    root.get("clienteId"), vendaFilter.getClienteId()
+            ));
         }
 
         int size = predicates.size();

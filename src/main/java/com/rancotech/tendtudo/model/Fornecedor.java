@@ -1,5 +1,6 @@
 package com.rancotech.tendtudo.model;
 
+import com.rancotech.tendtudo.model.enumerated.TipoPessoa;
 import com.rancotech.tendtudo.validation.CpfCnpjUnique;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
@@ -41,6 +42,27 @@ public class Fornecedor {
     @ManyToOne
     @JoinColumn(name = "cidade_id")
     private Cidade cidade;
+
+    @PrePersist @PreUpdate
+    private void prePersistPreUpdate() {
+        if (this.cpfOuCnpj.isEmpty()) {
+            this.cpfOuCnpj = null;
+        } else {
+            this.cpfOuCnpj = TipoPessoa.removerFormatacao(this.cpfOuCnpj);
+        }
+    }
+
+    @PostLoad
+    @PostUpdate
+    private void postLoad() {
+        if (this.cpfOuCnpj != null && !this.cpfOuCnpj.isEmpty()) {
+            if (this.cpfOuCnpj.length() == 11) {
+                this.cpfOuCnpj = TipoPessoa.formatarCpf(this.cpfOuCnpj);
+            } else {
+                this.cpfOuCnpj = TipoPessoa.formatarCnpj(this.cpfOuCnpj);
+            }
+        }
+    }
 
     public Long getId() {
         return id;

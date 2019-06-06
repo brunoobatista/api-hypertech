@@ -1,5 +1,7 @@
 package com.rancotech.tendtudo.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.rancotech.tendtudo.model.enumerated.TipoPessoa;
 import com.rancotech.tendtudo.validation.CpfCnpjUnique;
 import org.hibernate.annotations.Fetch;
@@ -27,10 +29,10 @@ public class Usuario {
     @NotEmpty
     private String email;
 
+    @JsonIgnore
     @Column(name = "password")
     private String password;
 
-    @NotEmpty
     private String username;
 
     @Column(name = "ativo")

@@ -28,7 +28,8 @@ public class Venda {
     private BigDecimal valor;
 
     @OneToMany(
-            mappedBy = "venda"
+            mappedBy = "venda",
+            fetch = FetchType.EAGER
     )
     private List<VendaProduto> produtos = new ArrayList<>();
 

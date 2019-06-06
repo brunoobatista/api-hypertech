@@ -41,12 +41,14 @@ public class ClienteResource {
     }
 
     @GetMapping("/search/{valor}")
+    @PreAuthorize("hasAnyAuthority('READ_CLIENTE', 'FULL_CLIENTE')")
     public List<Cliente> procurarCliente(@PathVariable String valor) {
 
         return clienteRepository.findByNomeContainsIgnoreCase(valor);
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('WRITE_CLIENTE', 'FULL_CLIENTE')")
     public ResponseEntity<Cliente> salvar(@Valid @RequestBody Cliente cliente, HttpServletResponse response) {
         Cliente clienteSalvo= clienteService.salvar(cliente);
 
@@ -56,6 +58,7 @@ public class ClienteResource {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('READ_CLIENTE', 'FULL_CLIENTE')")
     public ResponseEntity<Cliente> buscarPorCódigo(@PathVariable Long id) {
         Optional<Cliente> cliente = clienteRepository.findById(id);
         return cliente.isPresent() ? ResponseEntity.ok(cliente.get()) : ResponseEntity.notFound().build();
@@ -63,11 +66,13 @@ public class ClienteResource {
 
     @DeleteMapping("/only/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasAnyAuthority('WRITE_CLIENTE', 'FULL_CLIENTE')")
     public void removerById(@PathVariable Long id) {
         this.clienteRepository.deleteById(id);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('WRITE_CLIENTE', 'FULL_CLIENTE')")
     public ResponseEntity<Cliente> remover(@PathVariable Long id, Pageable pageable) {
         Cliente cliente = clienteService.remover(id, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(cliente);

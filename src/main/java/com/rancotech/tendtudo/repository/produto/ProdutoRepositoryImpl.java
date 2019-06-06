@@ -48,6 +48,11 @@ public class ProdutoRepositoryImpl implements ProdutoRepositoryQuery {
             predicates.add(builder.like(
                     builder.lower(root.get("nome")), "%" + produtoFilter.getNome().toLowerCase() + "%"));
         }
+        if (!StringUtils.isEmpty(produtoFilter.getTipoId())) {
+            predicates.add(builder.equal(
+               root.get("tipo"), produtoFilter.getTipoId()
+            ));
+        }
 
         int size = predicates.size();
         return predicates.toArray(new Predicate[size]);
