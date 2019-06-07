@@ -1,6 +1,7 @@
 package com.rancotech.tendtudo.repository.fornecedor;
 
 import com.rancotech.tendtudo.model.Fornecedor;
+import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
 import com.rancotech.tendtudo.repository.filter.FornecedorFilter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -61,6 +62,11 @@ public class FornecedorRepositoryImpl implements FornecedorRepositoryQuery {
             Predicate predicateOr = builder.or(predicate1, predicate2, predicate3);
             predicates.add(predicateOr);
         }
+
+        Predicate p = builder.and(
+                builder.equal(root.get("ativo"), StatusAtivo.ATIVADO.ordinal())
+        );
+        predicates.add(p);
 
         return predicates.toArray(new Predicate[predicates.size()]);
     }

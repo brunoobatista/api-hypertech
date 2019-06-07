@@ -2,8 +2,10 @@ package com.rancotech.tendtudo.resource;
 
 import com.rancotech.tendtudo.event.RecursoCriadoEvent;
 import com.rancotech.tendtudo.model.Fornecedor;
+import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
 import com.rancotech.tendtudo.repository.FornecedorRepository;
 import com.rancotech.tendtudo.repository.filter.FornecedorFilter;
+import com.rancotech.tendtudo.service.FornecedorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -22,6 +24,9 @@ import java.util.Optional;
 public class FornecedorResource {
 
     @Autowired
+    private FornecedorService fornecedorService;
+
+    @Autowired
     private FornecedorRepository fornecedorRepository;
 
     @Autowired
@@ -36,7 +41,7 @@ public class FornecedorResource {
     @PostMapping
     @PreAuthorize("hasAnyAuthority('WRITE_FORNECEDOR', 'FULL_FORNECEDOR')")
     public ResponseEntity<Fornecedor> criar(@Valid @RequestBody Fornecedor fornecedor, HttpServletResponse response) {
-        Fornecedor fornecedorSalvo = fornecedorRepository.save(fornecedor);
+        Fornecedor fornecedorSalvo = fornecedorService.salvar(fornecedor);
 
         publisher.publishEvent(new RecursoCriadoEvent(this, response, fornecedorSalvo.getId()));
 
@@ -46,16 +51,16 @@ public class FornecedorResource {
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('READ_FORNECEDOR', 'FULL_FORNECEDOR')")
     public ResponseEntity<Fornecedor> buscarPorCodigo(@PathVariable Long id) {
-        Optional<Fornecedor> fornecedor = fornecedorRepository.findById(id);
+        Optional<Fornecedor> fornecedor = fornecedorRepository.findAllByIdAndAtivoEquals(id, StatusAtivo.ATIVADO);
         return fornecedor.isPresent() ? ResponseEntity.ok(fornecedor.get()) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('WRITE_FORNECEDOR', 'FULL_FORNECEDOR')")
     //@ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> remover(@PathVariable Long id) {
-        fornecedorRepository.deleteById(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Fornecedor> remover(@PathVariable Long id, Pageable pageable) {
+        Fornecedor fornecedor = fornecedorService.remover(id, pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(fornecedor);
     }
 
 }

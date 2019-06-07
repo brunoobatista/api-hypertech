@@ -1,5 +1,8 @@
 package com.rancotech.tendtudo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -15,6 +18,11 @@ public class Tipo {
 	@Column(name = "tipo")
 	private String nome;
 
+	@Column(name = "ativo")
+	@Enumerated
+	@JsonIgnore
+	private StatusAtivo ativo;
+
 	public Long getId() {
 		return id;
 	}
@@ -29,6 +37,14 @@ public class Tipo {
 
 	public void setNome(String nome) {
 		this.nome = nome;
+	}
+
+	public StatusAtivo getAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(StatusAtivo ativo) {
+		this.ativo = ativo;
 	}
 
 	@Override

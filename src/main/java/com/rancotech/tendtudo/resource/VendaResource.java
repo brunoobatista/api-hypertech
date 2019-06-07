@@ -2,6 +2,7 @@ package com.rancotech.tendtudo.resource;
 
 import com.rancotech.tendtudo.event.RecursoCriadoEvent;
 import com.rancotech.tendtudo.model.Venda;
+import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
 import com.rancotech.tendtudo.model.enumerated.StatusVenda;
 import com.rancotech.tendtudo.repository.VendaRepository;
 import com.rancotech.tendtudo.repository.filter.VendaFilter;
@@ -38,7 +39,7 @@ public class VendaResource {
     @GetMapping("/listar")
     @PreAuthorize("hasAnyAuthority('READ_VENDA', 'FULL_VENDA')")
     public List<Venda> findAll() {
-        return vendaRepository.findAll();
+        return vendaRepository.findAllByAtivoEquals(StatusAtivo.ATIVADO);
     }
 
     @GetMapping
@@ -78,11 +79,10 @@ public class VendaResource {
 
     @PutMapping("/estornar")
     @PreAuthorize("hasAnyAuthority('WRITE_VENDA', 'FULL_VENDA')")
-    public ResponseEntity<Venda> estornar(@Valid @RequestBody Venda venda) {
+    public ResponseEntity<Venda> estornar(@Valid @RequestBody Venda venda, HttpServletResponse response) {
         if (venda.getStatus().equalsIgnoreCase(StatusVenda.FINALIZADA.toString())) {
             venda.setStatus(StatusVenda.ESTORNADA.toString());
-            vendaRepository.save(venda);
-            return ResponseEntity.ok(venda);
+            return ResponseEntity.status(HttpStatus.OK).body(this.salvar(venda, response));
         } else {
             throw new AtualizarVendaException();
         }
@@ -92,15 +92,15 @@ public class VendaResource {
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('READ_VENDA', 'FULL_VENDA')")
     public ResponseEntity<Venda> buscarPorCodigo(@PathVariable Long id) {
-        Optional<Venda> venda = vendaService.findById(id);
+        Optional<Venda> venda = vendaService.findByIdAtivo(id);
         return venda.isPresent() ? ResponseEntity.ok(venda.get()) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('WRITE_VENDA', 'FULL_VENDA')")
-    public ResponseEntity<Void> remover(@PathVariable Long id) {
-        this.vendaService.remover(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Venda> remover(@PathVariable Long id, Pageable pageable) {
+        Venda venda = this.vendaService.remover(id, pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(venda);
     }
 
     @DeleteMapping("/{vendaId}/{produtoId}")

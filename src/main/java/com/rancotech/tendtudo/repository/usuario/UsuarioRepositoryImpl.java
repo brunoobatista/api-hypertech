@@ -1,6 +1,7 @@
 package com.rancotech.tendtudo.repository.usuario;
 
 import com.rancotech.tendtudo.model.Usuario;
+import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
 import com.rancotech.tendtudo.repository.filter.UsuarioFilter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -63,6 +64,11 @@ public class UsuarioRepositoryImpl implements UsuarioRepositoryQuery {
 
             predicates.add(builder.or(p1, p2, p3, p4));
         }
+
+        Predicate p = builder.and(
+                builder.equal(root.get("ativo"), StatusAtivo.ATIVADO.ordinal())
+        );
+        predicates.add(p);
 
         int size = predicates.size();
         return predicates.toArray(new Predicate[size]);

@@ -1,6 +1,7 @@
 package com.rancotech.tendtudo.repository.produto;
 
 import com.rancotech.tendtudo.model.Produto;
+import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
 import com.rancotech.tendtudo.repository.filter.ProdutoFilter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -53,6 +54,12 @@ public class ProdutoRepositoryImpl implements ProdutoRepositoryQuery {
                root.get("tipo"), produtoFilter.getTipoId()
             ));
         }
+
+        Predicate p = builder.and(
+                builder.equal(root.get("ativo"), StatusAtivo.ATIVADO.ordinal())
+        );
+
+        predicates.add(p);
 
         int size = predicates.size();
         return predicates.toArray(new Predicate[size]);

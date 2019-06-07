@@ -1,6 +1,7 @@
 package com.rancotech.tendtudo.repository.tipo;
 
 import com.rancotech.tendtudo.model.Tipo;
+import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
 import com.rancotech.tendtudo.repository.filter.TipoFilter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -32,9 +33,15 @@ public class TipoRepositoryImpl implements TipoRepositoryQuery {
 
         if (!StringUtils.isEmpty(valor)) {
             predicates.add(builder.like(
-                    builder.lower(root.get("tipo")), "%" + valor.toLowerCase() + "%"));
-            criteria.where(predicates.toArray(new Predicate[predicates.size()]));
+                    builder.lower(root.get("nome")), "%" + valor.toLowerCase() + "%"));
         }
+
+        Predicate p = builder.and(
+                builder.equal(root.get("ativo"), StatusAtivo.ATIVADO.ordinal())
+        );
+        predicates.add(p);
+
+        criteria.where(predicates.toArray(new Predicate[predicates.size()]));
         criteria.orderBy(builder.asc(root.get("id")));
 
         TypedQuery<Tipo> query = manager.createQuery(criteria);
@@ -69,6 +76,11 @@ public class TipoRepositoryImpl implements TipoRepositoryQuery {
             predicates.add(builder.like(
                     builder.lower(root.get("nome")), "%" + tipoFilter.getNome().toLowerCase() + "%"));
         }
+
+        Predicate p = builder.and(
+                builder.equal(root.get("ativo"), StatusAtivo.ATIVADO.ordinal())
+        );
+        predicates.add(p);
 
         return predicates.toArray(new Predicate[predicates.size()]);
     }

@@ -55,7 +55,7 @@ public class Usuario {
 
     @PrePersist @PreUpdate
     private void prePersistPreUpdate() {
-        if (this.cpf.isEmpty()) {
+        if (this.cpf == null || this.cpf.isEmpty()) {
             this.cpf = null;
         } else {
             this.cpf = TipoPessoa.removerFormatacao(this.cpf);

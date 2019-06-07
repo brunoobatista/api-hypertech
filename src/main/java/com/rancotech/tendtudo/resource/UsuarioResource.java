@@ -4,6 +4,7 @@ import com.rancotech.tendtudo.event.RecursoCriadoEvent;
 import com.rancotech.tendtudo.model.Cliente;
 import com.rancotech.tendtudo.model.Role;
 import com.rancotech.tendtudo.model.Usuario;
+import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
 import com.rancotech.tendtudo.repository.RoleRepository;
 import com.rancotech.tendtudo.repository.UsuarioRepository;
 import com.rancotech.tendtudo.repository.filter.UsuarioFilter;
@@ -48,7 +49,7 @@ public class UsuarioResource {
     @PreAuthorize("hasAnyAuthority('READ_USUARIO', 'FULL_USUARIO')")
     public List<Usuario> procurarUsuario(@PathVariable String valor) {
 
-        return this.usuarioRepository.findByNomeContainsIgnoreCase(valor);
+        return this.usuarioRepository.findByNomeContainsIgnoreCaseAndAtivoEquals(valor, Integer.parseInt(StatusAtivo.ATIVADO.toString()));
     }
 
     @PostMapping
@@ -70,7 +71,7 @@ public class UsuarioResource {
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('READ_USUARIO', 'FULL_USUARIO')")
     public ResponseEntity<Usuario> buscarPorCódigo(@PathVariable Long id) {
-        Optional<Usuario> usuario = usuarioRepository.findById(id);
+        Optional<Usuario> usuario = usuarioRepository.findByIdAndAtivoEquals(id, StatusAtivo.ATIVADO);
         return usuario.isPresent() ? ResponseEntity.ok(usuario.get()) : ResponseEntity.notFound().build();
     }
 

@@ -1,6 +1,7 @@
 package com.rancotech.tendtudo.repository.cliente;
 
 import com.rancotech.tendtudo.model.Cliente;
+import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
 import com.rancotech.tendtudo.model.enumerated.TipoPessoa;
 import com.rancotech.tendtudo.repository.filter.ClienteFilter;
 import org.springframework.data.domain.Page;
@@ -72,6 +73,11 @@ public class ClienteRepositoryImpl implements ClienteRepositoryQuery {
             );
             predicates.add(builder.and(p4));
         }
+
+        Predicate p = builder.and(
+                builder.equal(root.get("ativo"), StatusAtivo.ATIVADO.ordinal())
+        );
+        predicates.add(p);
 
         int size = predicates.size();
         return predicates.toArray(new Predicate[size]);

@@ -1,6 +1,8 @@
 package com.rancotech.tendtudo.model;
 
 
+import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -30,6 +32,10 @@ public class Produto implements Serializable {
     @ManyToOne
     @JoinColumn(name = "tipo_id")
     private Tipo tipo;
+
+    @Column(name = "ativo")
+    @Enumerated
+    private StatusAtivo ativo;
 
     /*@OneToMany(
             mappedBy = "produto",
@@ -85,6 +91,14 @@ public class Produto implements Serializable {
 
     public void setTipo(Tipo tipo) {
         this.tipo = tipo;
+    }
+
+    public StatusAtivo getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(StatusAtivo ativo) {
+        this.ativo = ativo;
     }
 
     @Override

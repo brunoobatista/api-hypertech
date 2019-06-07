@@ -1,5 +1,6 @@
 package com.rancotech.tendtudo.model;
 
+import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
 import com.rancotech.tendtudo.model.enumerated.TipoPessoa;
 import com.rancotech.tendtudo.model.validation.ClienteGroupSequenceProvider;
 import com.rancotech.tendtudo.validation.CpfCnpjUnique;
@@ -43,11 +44,12 @@ public class Cliente {
     private boolean confirmado;
 
     @Column(name = "ativo")
-    private Integer ativo;
+    @Enumerated
+    private StatusAtivo ativo;
 
     @PrePersist @PreUpdate
     private void prePersistPreUpdate() {
-        if (this.cpfCnpj.isEmpty()) {
+        if (this.cpfCnpj == null || this.cpfCnpj.isEmpty()) {
             this.cpfCnpj = null;
         } else {
             this.cpfCnpj = TipoPessoa.removerFormatacao(this.cpfCnpj);
@@ -126,11 +128,11 @@ public class Cliente {
         this.confirmado = confirmado;
     }
 
-    public Integer getAtivo() {
+    public StatusAtivo getAtivo() {
         return ativo;
     }
 
-    public void setAtivo(Integer ativo) {
+    public void setAtivo(StatusAtivo ativo) {
         this.ativo = ativo;
     }
 

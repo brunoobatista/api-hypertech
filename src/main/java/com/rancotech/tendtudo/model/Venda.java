@@ -2,6 +2,7 @@ package com.rancotech.tendtudo.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
 import com.rancotech.tendtudo.model.enumerated.StatusVenda;
 import com.rancotech.tendtudo.repository.ClienteRepository;
 import org.springframework.lang.Nullable;
@@ -53,6 +54,10 @@ public class Venda {
 
     @Transient
     private Cliente cliente;
+
+    @Column(name = "ativo")
+    @Enumerated
+    private StatusAtivo ativo;
 
     public Cliente getCliente() {
         return cliente;
@@ -154,7 +159,13 @@ public class Venda {
         this.clienteId = clienteId;
     }
 
+    public StatusAtivo getAtivo() {
+        return ativo;
+    }
 
+    public void setAtivo(StatusAtivo ativo) {
+        this.ativo = ativo;
+    }
 
     @Override
     public boolean equals(Object o) {

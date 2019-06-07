@@ -1,5 +1,6 @@
 package com.rancotech.tendtudo.model;
 
+import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
 import com.rancotech.tendtudo.model.enumerated.TipoPessoa;
 import com.rancotech.tendtudo.validation.CpfCnpjUnique;
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -42,6 +43,10 @@ public class Fornecedor {
     @ManyToOne
     @JoinColumn(name = "cidade_id")
     private Cidade cidade;
+
+    @Column(name = "ativo")
+    @Enumerated
+    private StatusAtivo ativo;
 
     @PrePersist @PreUpdate
     private void prePersistPreUpdate() {
@@ -126,6 +131,14 @@ public class Fornecedor {
 
     public void setCidade(Cidade cidade) {
         this.cidade = cidade;
+    }
+
+    public StatusAtivo getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(StatusAtivo ativo) {
+        this.ativo = ativo;
     }
 
     @Override

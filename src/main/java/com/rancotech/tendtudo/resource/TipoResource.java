@@ -2,8 +2,10 @@ package com.rancotech.tendtudo.resource;
 
 import com.rancotech.tendtudo.event.RecursoCriadoEvent;
 import com.rancotech.tendtudo.model.Tipo;
+import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
 import com.rancotech.tendtudo.repository.TipoRepository;
 import com.rancotech.tendtudo.repository.filter.TipoFilter;
+import com.rancotech.tendtudo.service.TipoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -24,6 +26,9 @@ public class TipoResource {
 
 	@Autowired
 	private TipoRepository tipoRepository;
+
+	@Autowired
+	private TipoService tipoService;
 
 	@Autowired
 	private ApplicationEventPublisher publisher;
@@ -50,7 +55,7 @@ public class TipoResource {
 	@PostMapping
 	@PreAuthorize("hasAnyAuthority('WRITE_PRODUTO', 'FULL_PRODUTO')")
 	public ResponseEntity<Tipo> criar(@Valid @RequestBody Tipo tipo, HttpServletResponse response) {
-		Tipo tipoSalvo = tipoRepository.save(tipo);
+		Tipo tipoSalvo = tipoService.salvar(tipo);
 
 		publisher.publishEvent(new RecursoCriadoEvent(this, response, tipoSalvo.getId()));
 
@@ -60,16 +65,16 @@ public class TipoResource {
 	@GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('READ_PRODUTO', 'FULL_PRODUTO')")
 	public ResponseEntity<Tipo> buscarPorCodigo(@PathVariable Long id) {
-		Optional<Tipo> tipo = tipoRepository.findById(id);
+		Optional<Tipo> tipo = tipoRepository.findByIdAndAtivoEquals(id, StatusAtivo.ATIVADO);
 		return tipo.isPresent() ? ResponseEntity.ok(tipo.get()) : ResponseEntity.notFound().build();
 	}
 
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasAnyAuthority('WRITE_PRODUTO', 'FULL_PRODUTO')")
 	//@ResponseStatus(HttpStatus.NO_CONTENT)
-	public ResponseEntity<Object> remover(@PathVariable Long id) {
-		tipoRepository.deleteById(id);
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).body("ok");
+	public ResponseEntity<Tipo> remover(@PathVariable Long id, Pageable pageable) {
+		Tipo tipo = tipoService.remove(id, pageable);
+		return ResponseEntity.status(HttpStatus.OK).body(tipo);
 	}
 
 

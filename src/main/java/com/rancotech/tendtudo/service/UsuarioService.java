@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -21,8 +22,13 @@ public class UsuarioService {
     private UsuarioRepository usuarioRepository;
 
     public Usuario remover(Long id, Pageable pageable) {
-        List<Usuario> usuarios = usuarioRepository.selectClienteNextPage(pageable.getPageSize(), pageable.getPageNumber());
-        this.usuarioRepository.deleteById(id);
+        List<Usuario> usuarios = usuarioRepository.selectClienteNextPage(pageable.getPageSize(), pageable.getPageNumber(), StatusAtivo.ATIVADO.ordinal());
+        Optional<Usuario> usuario = usuarioRepository.findById(id);
+        if (usuario.isPresent()) {
+            usuario.get().setAtivo(StatusAtivo.DESATIVADO);
+            usuarioRepository.save(usuario.get());
+        }
+        //this.usuarioRepository.deleteById(id);
 
         return usuarios.isEmpty() ? null : usuarios.get(0);
     }

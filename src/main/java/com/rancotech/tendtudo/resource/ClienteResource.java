@@ -2,6 +2,7 @@ package com.rancotech.tendtudo.resource;
 
 import com.rancotech.tendtudo.event.RecursoCriadoEvent;
 import com.rancotech.tendtudo.model.Cliente;
+import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
 import com.rancotech.tendtudo.repository.ClienteRepository;
 import com.rancotech.tendtudo.repository.filter.ClienteFilter;
 import com.rancotech.tendtudo.service.ClienteService;
@@ -44,7 +45,7 @@ public class ClienteResource {
     @PreAuthorize("hasAnyAuthority('READ_CLIENTE', 'FULL_CLIENTE')")
     public List<Cliente> procurarCliente(@PathVariable String valor) {
 
-        return clienteRepository.findByNomeContainsIgnoreCase(valor);
+        return clienteRepository.findByNomeContainsIgnoreCaseAndAtivoEquals(valor, StatusAtivo.ATIVADO);
     }
 
     @PostMapping
@@ -66,7 +67,7 @@ public class ClienteResource {
 
     @DeleteMapping("/only/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasAnyAuthority('WRITE_CLIENTE', 'FULL_CLIENTE')")
+    @PreAuthorize("hasAnyAuthority('FULL_CLIENTE')")
     public void removerById(@PathVariable Long id) {
         this.clienteRepository.deleteById(id);
     }

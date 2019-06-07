@@ -1,6 +1,7 @@
 package com.rancotech.tendtudo.repository.venda;
 
 import com.rancotech.tendtudo.model.Venda;
+import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
 import com.rancotech.tendtudo.model.enumerated.StatusVenda;
 import com.rancotech.tendtudo.repository.filter.VendaFilter;
 import org.springframework.data.domain.Page;
@@ -72,6 +73,11 @@ public class VendaRepositoryImpl implements VendaRepositoryQuery {
                     root.get("clienteId"), vendaFilter.getClienteId()
             ));
         }
+
+        Predicate p = builder.and(
+                builder.equal(root.get("ativo"), StatusAtivo.ATIVADO.ordinal())
+        );
+        predicates.add(p);
 
         int size = predicates.size();
         return predicates.toArray(new Predicate[size]);

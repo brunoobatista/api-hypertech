@@ -1,6 +1,7 @@
 package com.rancotech.tendtudo.repository;
 
 import com.rancotech.tendtudo.model.Cliente;
+import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
 import com.rancotech.tendtudo.repository.cliente.ClienteRepositoryQuery;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,7 +12,7 @@ import java.util.List;
 
 public interface ClienteRepository extends JpaRepository<Cliente, Long>, ClienteRepositoryQuery {
 
-    List<Cliente> findByNomeContainsIgnoreCase(String valor);
+    List<Cliente> findByNomeContainsIgnoreCaseAndAtivoEquals(String valor, StatusAtivo ativo);
     boolean existsByEmail(String email);
     boolean existsByCpfCnpj(String cpfCnpj);
 
@@ -22,8 +23,8 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long>, Cliente
     Page<Cliente> selectByIdFirstAndSecondItem(Pageable pageable);
 
     @Query(
-            value = "SELECT * FROM cliente ORDER BY id LIMIT ?1 OFFSET ?2",
+            value = "SELECT * FROM cliente WHERE ativo = ?3 ORDER BY id LIMIT ?1 OFFSET ?2",
             nativeQuery = true)
-    List<Cliente> selectClienteNextPage(int limit, int offset);
+    List<Cliente> selectClienteNextPage(int limit, int offset, int ativo);
 
 }

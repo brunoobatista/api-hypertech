@@ -1,6 +1,7 @@
 package com.rancotech.tendtudo.service;
 
 import com.rancotech.tendtudo.model.Cliente;
+import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
 import com.rancotech.tendtudo.repository.ClienteRepository;
 import com.rancotech.tendtudo.service.exception.SenhaConfirmacaoException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -19,8 +21,12 @@ public class ClienteService {
     private ClienteRepository clienteRepository;
 
     public Cliente remover(Long id, Pageable pageable) {
-        List<Cliente> cliente = clienteRepository.selectClienteNextPage(pageable.getPageSize(), pageable.getPageNumber());
-        this.clienteRepository.deleteById(id);
+        List<Cliente> cliente = clienteRepository.selectClienteNextPage(pageable.getPageSize(), pageable.getPageNumber(), StatusAtivo.ATIVADO.ordinal());
+        Optional<Cliente> clienteRemove = clienteRepository.findById(id);
+        if (clienteRemove.isPresent()) {
+            clienteRemove.get().setAtivo(StatusAtivo.DESATIVADO);
+            clienteRepository.saveAndFlush(clienteRemove.get());
+        }
 
         return cliente.isEmpty() ? null : cliente.get(0);
     }
@@ -33,7 +39,8 @@ public class ClienteService {
         }*/
 
         Cliente clienteVerificado = this.verificarPassword(cliente);
-        return clienteRepository.save(clienteVerificado);
+        clienteVerificado.setAtivo(StatusAtivo.ATIVADO);
+        return clienteRepository.saveAndFlush(clienteVerificado);
     }
 
     private Cliente verificarPassword(Cliente cliente) {

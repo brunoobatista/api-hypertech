@@ -2,8 +2,11 @@ package com.rancotech.tendtudo.resource;
 
 import com.rancotech.tendtudo.event.RecursoCriadoEvent;
 import com.rancotech.tendtudo.model.Produto;
+import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
 import com.rancotech.tendtudo.repository.ProdutoRepository;
 import com.rancotech.tendtudo.repository.filter.ProdutoFilter;
+import com.rancotech.tendtudo.service.ProdutoService;
+import com.rancotech.tendtudo.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -26,6 +29,9 @@ public class ProdutoResource {
     private ProdutoRepository produtoRepository;
 
     @Autowired
+    private ProdutoService produtoService;
+
+    @Autowired
     private ApplicationEventPublisher publisher;
 
     @GetMapping
@@ -37,13 +43,13 @@ public class ProdutoResource {
     @GetMapping("/search/{valor}")
     @PreAuthorize("hasAnyAuthority('READ_PRODUTO', 'FULL_PRODUTO')")
     public List<Produto> buscarTodos(@PathVariable String valor) {
-        return produtoRepository.findByNomeContainsIgnoreCaseOrderById(valor);
+        return produtoRepository.findByNomeContainsIgnoreCaseAndAtivoEqualsOrderById(valor, StatusAtivo.ATIVADO);
     }
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('WRITE_PRODUTO', 'FULL_PRODUTO')")
     public ResponseEntity<Produto> salvar(@Valid @RequestBody Produto produto, HttpServletResponse response) {
-        Produto produtoSalvo = produtoRepository.save(produto);
+        Produto produtoSalvo = produtoService.salvar(produto);
 
         publisher.publishEvent(new RecursoCriadoEvent(this, response, produtoSalvo.getId()));
 
@@ -53,15 +59,14 @@ public class ProdutoResource {
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('READ_PRODUTO', 'FULL_PRODUTO')")
     public ResponseEntity<Produto> buscarPorCodigo(@PathVariable Long id) {
-        Optional<Produto> produto = produtoRepository.findById(id);
+        Optional<Produto> produto = produtoRepository.findByIdAndAtivoEquals(id, StatusAtivo.ATIVADO);
         return produto.isPresent() ? ResponseEntity.ok(produto.get()) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('WRITE_PRODUTO', 'FULL_PRODUTO')")
-    public ResponseEntity<Void> remover(@PathVariable Long id) {
-        produtoRepository.deleteById(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Produto> remover(@PathVariable Long id, Pageable pageable) {
+        return ResponseEntity.status(HttpStatus.OK).body(produtoService.remover(id, pageable));
     }
 
 
