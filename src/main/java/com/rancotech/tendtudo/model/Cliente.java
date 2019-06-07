@@ -1,5 +1,6 @@
 package com.rancotech.tendtudo.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
 import com.rancotech.tendtudo.model.enumerated.TipoPessoa;
 import com.rancotech.tendtudo.model.validation.ClienteGroupSequenceProvider;
@@ -9,6 +10,7 @@ import org.hibernate.validator.group.GroupSequenceProvider;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @CpfCnpjUnique(cpfCnpj = "cpfCnpj", id = "id", message = "CPF/CNPJ já existentes")
@@ -47,8 +49,22 @@ public class Cliente {
     @Enumerated
     private StatusAtivo ativo;
 
-    @PrePersist @PreUpdate
-    private void prePersistPreUpdate() {
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    private void prePersist() {
+        this.createdAt = LocalDateTime.now();
+        this.setCpfCnpjDoc();
+    }
+
+    @PreUpdate
+    private void preUpdate() {
+        this.setCpfCnpjDoc();
+    }
+
+    private void setCpfCnpjDoc() {
         if (this.cpfCnpj == null || this.cpfCnpj.isEmpty()) {
             this.cpfCnpj = null;
         } else {

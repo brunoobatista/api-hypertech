@@ -1,6 +1,7 @@
 package com.rancotech.tendtudo.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
 import com.rancotech.tendtudo.model.enumerated.TipoPessoa;
@@ -11,6 +12,7 @@ import org.hibernate.annotations.FetchMode;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -53,8 +55,22 @@ public class Usuario {
             name = "role_id", referencedColumnName = "id"))
     private Collection<Role> roles;
 
-    @PrePersist @PreUpdate
-    private void prePersistPreUpdate() {
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    private void prePersist() {
+        this.createdAt = LocalDateTime.now();
+        this.setCpfCnpjDoc();
+    }
+
+    @PreUpdate
+    private void preUpdate() {
+        this.setCpfCnpjDoc();
+    }
+
+    private void setCpfCnpjDoc() {
         if (this.cpf == null || this.cpf.isEmpty()) {
             this.cpf = null;
         } else {
@@ -139,6 +155,14 @@ public class Usuario {
 
     public void setAtivo(StatusAtivo ativo) {
         this.ativo = ativo;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     @Override

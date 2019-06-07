@@ -1,5 +1,6 @@
 package com.rancotech.tendtudo.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
 import com.rancotech.tendtudo.model.enumerated.TipoPessoa;
 import com.rancotech.tendtudo.validation.CpfCnpjUnique;
@@ -8,6 +9,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @CpfCnpjUnique(cpfCnpj = "cpfOuCnpj", id = "id", message = "CPF/CNPJ já existentes")
@@ -48,9 +50,23 @@ public class Fornecedor {
     @Enumerated
     private StatusAtivo ativo;
 
-    @PrePersist @PreUpdate
-    private void prePersistPreUpdate() {
-        if (this.cpfOuCnpj.isEmpty()) {
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    private void prePersist() {
+        this.createdAt = LocalDateTime.now();
+        this.setCpfCnpjDoc();
+    }
+
+    @PreUpdate
+    private void preUpdate() {
+        this.setCpfCnpjDoc();
+    }
+
+    private void setCpfCnpjDoc() {
+        if (this.cpfOuCnpj == null || this.cpfOuCnpj.isEmpty()) {
             this.cpfOuCnpj = null;
         } else {
             this.cpfOuCnpj = TipoPessoa.removerFormatacao(this.cpfOuCnpj);
