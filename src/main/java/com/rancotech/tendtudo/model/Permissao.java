@@ -2,6 +2,7 @@ package com.rancotech.tendtudo.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import java.util.Collection;
 import java.util.Objects;
 
 @Entity
@@ -12,8 +13,11 @@ public class Permissao {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty(message = "Descrição obrigatória")
-    private String descricao;
+    @Column(name = "nome")
+    private String nome;
+
+    @ManyToMany(mappedBy = "permissaos")
+    private Collection<Role> roles;
 
     public Long getId() {
         return id;
@@ -23,12 +27,20 @@ public class Permissao {
         this.id = id;
     }
 
-    public String getDescricao() {
-        return descricao;
+    public String getNome() {
+        return nome;
     }
 
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public Collection<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Collection<Role> roles) {
+        this.roles = roles;
     }
 
     @Override

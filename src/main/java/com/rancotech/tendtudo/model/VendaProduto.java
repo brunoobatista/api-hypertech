@@ -6,13 +6,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.rancotech.tendtudo.model.embeddables.VendaProdutoId;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Objects;
 
 @Entity
 @Table(name = "venda_produtos")
 public class VendaProduto {
 
-    @JsonIgnore
     @EmbeddedId
     private VendaProdutoId id;
 
@@ -22,18 +22,22 @@ public class VendaProduto {
     private Venda venda;
 
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("produtoId")
     private Produto produto;
 
     @Column(name = "quantidade")
     private Integer quantidade;
 
+    @Column(name="valor")
+    private BigDecimal valor;
+
     public VendaProduto() {}
 
     public VendaProduto(
             Venda venda, Produto produto, Integer quantidade
     ) {
+        this.valor = produto.getValor();
         this.quantidade = quantidade;
         this.venda = venda;
         this.produto = produto;
@@ -70,6 +74,14 @@ public class VendaProduto {
 
     public void setQuantidade(Integer quantidade) {
         this.quantidade = quantidade;
+    }
+
+    public BigDecimal getValor() {
+        return valor;
+    }
+
+    public void setValor(BigDecimal valor) {
+        this.valor = valor;
     }
 
     @Override

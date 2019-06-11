@@ -1,6 +1,6 @@
 package com.rancotech.tendtudo.exceptionhandler;
 
-import com.rancotech.tendtudo.service.exception.BuscaValorNullException;
+import com.rancotech.tendtudo.service.exception.*;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -23,6 +23,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @ControllerAdvice
 public class TendtudoExceptionHandler extends ResponseEntityExceptionHandler {
@@ -56,33 +57,63 @@ public class TendtudoExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
+    @ExceptionHandler({ NoSuchElementException.class })
+    public ResponseEntity<Object> handleNoSuchElementException(NoSuchElementException ex, WebRequest request) {
+        String mensagemUsuario = messageSource.getMessage("recurso.vazio", null, LocaleContextHolder.getLocale());
+        String mensagemDesenvolvedor = ex.toString();
+        List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
+        return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    }
+
     @ExceptionHandler({ DataIntegrityViolationException.class })
     public ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request) {
         String mensagemUsuario = messageSource.getMessage("recurso.opecarao-nao-permitida", null, LocaleContextHolder.getLocale());
-        String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
-        List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
-        return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+        return this.montaMensagem(ex, request, mensagemUsuario);
     }
 
     @ExceptionHandler({ InvalidTokenException.class })
     public ResponseEntity<Object> handleInvalidTokenException(Exception ex, WebRequest request) {
         String mensagemUsuario = messageSource.getMessage("token.invalido", null, LocaleContextHolder.getLocale());
-        String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
-        List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
-        return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+        return this.montaMensagem(ex, request, mensagemUsuario);
     }
 
     @ExceptionHandler({ NullPointerException.class })
     public ResponseEntity<Object> handleNullPointerException(Exception ex, WebRequest request) {
-        String mensagemUsuario = messageSource.getMessage("token.invalido", null, LocaleContextHolder.getLocale());
-        String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
-        List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
-        return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+        String mensagemUsuario = messageSource.getMessage("valor.invalido", null, LocaleContextHolder.getLocale());
+        return this.montaMensagem(ex, request, mensagemUsuario);
     }
 
     @ExceptionHandler({ BuscaValorNullException.class })
     public ResponseEntity<Object> handleBuscaValorNullException(Exception ex, WebRequest request) {
         String mensagemUsuario = messageSource.getMessage("busca.null", null, LocaleContextHolder.getLocale());
+        return this.montaMensagem(ex, request, mensagemUsuario);
+    }
+
+    @ExceptionHandler({ AtualizarVendaException.class })
+    public ResponseEntity<Object> handleAtualizarVendaException(Exception ex, WebRequest request) {
+        String mensagemUsuario = messageSource.getMessage("busca.status-invalido", null, LocaleContextHolder.getLocale());
+        return this.montaMensagem(ex, request, mensagemUsuario);
+    }
+
+    @ExceptionHandler({ SenhaConfirmacaoException.class })
+    public ResponseEntity<Object> handleSenhaConfirmacaoException(Exception ex, WebRequest request) {
+        String mensagemUsuario = messageSource.getMessage("senha.incorreta", null, LocaleContextHolder.getLocale());
+        return this.montaMensagem(ex, request, mensagemUsuario);
+    }
+
+    @ExceptionHandler({ SenhaObrigatoriaException.class })
+    public ResponseEntity<Object> handleSSenhaObrigatoriaException(Exception ex, WebRequest request) {
+        String mensagemUsuario = messageSource.getMessage("senha.obrigatoria", null, LocaleContextHolder.getLocale());
+        return this.montaMensagem(ex, request, mensagemUsuario);
+    }
+
+    @ExceptionHandler({ UsernameObrigatorioException.class })
+    public ResponseEntity<Object> handleUsernameObrigatorioException(Exception ex, WebRequest request) {
+        String mensagemUsuario = messageSource.getMessage("username.obrigatoria", null, LocaleContextHolder.getLocale());
+        return this.montaMensagem(ex, request, mensagemUsuario);
+    }
+
+    private ResponseEntity<Object> montaMensagem(Exception ex, WebRequest request, String mensagemUsuario) {
         String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
         List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
         return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);

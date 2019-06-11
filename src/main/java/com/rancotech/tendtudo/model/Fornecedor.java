@@ -1,11 +1,15 @@
 package com.rancotech.tendtudo.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
+import com.rancotech.tendtudo.model.enumerated.TipoPessoa;
 import com.rancotech.tendtudo.validation.CpfCnpjUnique;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @CpfCnpjUnique(cpfCnpj = "cpfOuCnpj", id = "id", message = "CPF/CNPJ já existentes")
@@ -41,6 +45,45 @@ public class Fornecedor {
     @ManyToOne
     @JoinColumn(name = "cidade_id")
     private Cidade cidade;
+
+    @Column(name = "ativo")
+    @Enumerated
+    private StatusAtivo ativo;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    private void prePersist() {
+        this.createdAt = LocalDateTime.now();
+        this.setCpfCnpjDoc();
+    }
+
+    @PreUpdate
+    private void preUpdate() {
+        this.setCpfCnpjDoc();
+    }
+
+    private void setCpfCnpjDoc() {
+        if (this.cpfOuCnpj == null || this.cpfOuCnpj.isEmpty()) {
+            this.cpfOuCnpj = null;
+        } else {
+            this.cpfOuCnpj = TipoPessoa.removerFormatacao(this.cpfOuCnpj);
+        }
+    }
+
+    @PostLoad
+    @PostUpdate
+    private void postLoad() {
+        if (this.cpfOuCnpj != null && !this.cpfOuCnpj.isEmpty()) {
+            if (this.cpfOuCnpj.length() == 11) {
+                this.cpfOuCnpj = TipoPessoa.formatarCpf(this.cpfOuCnpj);
+            } else {
+                this.cpfOuCnpj = TipoPessoa.formatarCnpj(this.cpfOuCnpj);
+            }
+        }
+    }
 
     public Long getId() {
         return id;
@@ -104,6 +147,14 @@ public class Fornecedor {
 
     public void setCidade(Cidade cidade) {
         this.cidade = cidade;
+    }
+
+    public StatusAtivo getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(StatusAtivo ativo) {
+        this.ativo = ativo;
     }
 
     @Override

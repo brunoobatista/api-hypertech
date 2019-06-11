@@ -1,18 +1,18 @@
 package com.rancotech.tendtudo.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
+import com.rancotech.tendtudo.model.enumerated.TipoPessoa;
 import com.rancotech.tendtudo.model.validation.ClienteGroupSequenceProvider;
-import com.rancotech.tendtudo.validation.AtributosConfirmacao;
 import com.rancotech.tendtudo.validation.CpfCnpjUnique;
 import org.hibernate.validator.group.GroupSequenceProvider;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
-@AtributosConfirmacao(atributo = "password", atributoConfirmacao = "confirmPassword", id = "id", message = "Confirmação da senha não confere")
 @CpfCnpjUnique(cpfCnpj = "cpfCnpj", id = "id", message = "CPF/CNPJ já existentes")
 @Entity
 @Table(name = "cliente")
@@ -39,20 +39,44 @@ public class Cliente {
     @Column(name = "tipo_pessoa")
     private TipoPessoa tipoPessoa;
 
-
-    @NotEmpty
     @Column(name = "cpf_cnpj")
     private String cpfCnpj;
 
-    @PrePersist @PreUpdate
-    private void prePersistPreUpdate() {
-        this.cpfCnpj = TipoPessoa.removerFormatacao(this.cpfCnpj);
+    @Column(name = "confirmado")
+    private boolean confirmado;
+
+    @Column(name = "ativo")
+    @Enumerated
+    private StatusAtivo ativo;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    private void prePersist() {
+        this.createdAt = LocalDateTime.now();
+        this.setCpfCnpjDoc();
+    }
+
+    @PreUpdate
+    private void preUpdate() {
+        this.setCpfCnpjDoc();
+    }
+
+    private void setCpfCnpjDoc() {
+        if (this.cpfCnpj == null || this.cpfCnpj.isEmpty()) {
+            this.cpfCnpj = null;
+        } else {
+            this.cpfCnpj = TipoPessoa.removerFormatacao(this.cpfCnpj);
+        }
     }
 
     @PostLoad
     @PostUpdate
     private void postLoad() {
-        this.cpfCnpj = this.tipoPessoa.formatar(this.cpfCnpj);
+        if (this.cpfCnpj != null && !this.cpfCnpj.isEmpty())
+            this.cpfCnpj = this.tipoPessoa.formatar(this.cpfCnpj);
     }
 
     public String getConfirmPassword() {
@@ -110,6 +134,22 @@ public class Cliente {
 
     public void setTipoPessoa(TipoPessoa tipoPessoa) {
         this.tipoPessoa = tipoPessoa;
+    }
+
+    public boolean isConfirmado() {
+        return confirmado;
+    }
+
+    public void setConfirmado(boolean confirmado) {
+        this.confirmado = confirmado;
+    }
+
+    public StatusAtivo getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(StatusAtivo ativo) {
+        this.ativo = ativo;
     }
 
     @Override

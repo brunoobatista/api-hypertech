@@ -19,6 +19,7 @@ public class CustomTokenEnchancer implements TokenEnhancer {
         addInfo.put("nome", usuarioSistema.getUsuario().getNome());
         addInfo.put("email", usuarioSistema.getUsuario().getEmail());
         addInfo.put("id", usuarioSistema.getUsuario().getId());
+        addInfo.put("created_at", usuarioSistema.getUsuario().getCreatedAt());
 
         ((DefaultOAuth2AccessToken) oAuth2AccessToken).setAdditionalInformation(addInfo);
         return oAuth2AccessToken;

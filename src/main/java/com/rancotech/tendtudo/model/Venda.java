@@ -2,15 +2,16 @@ package com.rancotech.tendtudo.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
+import com.rancotech.tendtudo.model.enumerated.StatusVenda;
+import com.rancotech.tendtudo.repository.ClienteRepository;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Table(name = "venda")
@@ -21,14 +22,15 @@ public class Venda {
     private Long id;
 
     @Column(name="data_venda")
-    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime dataVenda;
 
     @Column(name="valor")
     private BigDecimal valor;
 
     @OneToMany(
-            mappedBy = "venda"
+            mappedBy = "venda",
+            fetch = FetchType.EAGER
     )
     private List<VendaProduto> produtos = new ArrayList<>();
 
@@ -43,6 +45,35 @@ public class Venda {
 
     @Column(name="desconto")
     private BigDecimal desconto;
+
+    @Column(name = "cliente_id")
+    private Long clienteId;
+
+    @Column(name = "status")
+    private String status;
+
+    @Transient
+    private Cliente cliente;
+
+    @Column(name = "ativo")
+    @Enumerated
+    private StatusAtivo ativo;
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public void addProduto(Produto produto, Integer quantidade) {
         VendaProduto vendaProduto = new VendaProduto(this, produto, quantidade);
@@ -118,6 +149,22 @@ public class Venda {
 
     public void setObservacao(String observacao) {
         this.observacao = observacao;
+    }
+
+    public Long getClienteId() {
+        return clienteId;
+    }
+
+    public void setClienteId(Long clienteId) {
+        this.clienteId = clienteId;
+    }
+
+    public StatusAtivo getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(StatusAtivo ativo) {
+        this.ativo = ativo;
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.rancotech.tendtudo.repository.cliente;
 
 import com.rancotech.tendtudo.model.Cliente;
+import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
+import com.rancotech.tendtudo.model.enumerated.TipoPessoa;
 import com.rancotech.tendtudo.repository.filter.ClienteFilter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -45,9 +47,37 @@ public class ClienteRepositoryImpl implements ClienteRepositoryQuery {
         List<Predicate> predicates = new ArrayList<>();
 
         if (!StringUtils.isEmpty(clienteFilter.getNome())) {
-            predicates.add(builder.like(
-                    builder.lower(root.get("nome")), "%" + clienteFilter.getNome().toLowerCase() + "%"));
+            Predicate p1 = builder.like(
+                    builder.lower(root.get("nome")), "%" + clienteFilter.getNome().toLowerCase() + "%"
+            );
+
+            Predicate p2 = builder.like(
+                    builder.lower(root.get("cpfCnpj")), "%" + clienteFilter.getNome().toLowerCase() + "%"
+            );
+
+            Predicate p3 = builder.like(
+                    builder.lower(root.get("email")), "%" + clienteFilter.getNome().toLowerCase() + "%"
+            );
+
+            predicates.add(builder.or(p1, p2, p3));
         }
+        if (!StringUtils.isEmpty(clienteFilter.getTipoPessoa())) {
+            TipoPessoa tp;
+            if (TipoPessoa.FISICA.toString().equals(clienteFilter.getTipoPessoa()) ) {
+                tp = TipoPessoa.FISICA;
+            } else {
+                tp = TipoPessoa.JURIDICA;
+            }
+            Predicate p4 = builder.equal(
+                    root.get("tipoPessoa"), tp
+            );
+            predicates.add(builder.and(p4));
+        }
+
+        Predicate p = builder.and(
+                builder.equal(root.get("ativo"), StatusAtivo.ATIVADO.ordinal())
+        );
+        predicates.add(p);
 
         int size = predicates.size();
         return predicates.toArray(new Predicate[size]);

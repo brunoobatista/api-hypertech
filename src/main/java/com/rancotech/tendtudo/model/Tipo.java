@@ -1,7 +1,12 @@
 package com.rancotech.tendtudo.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tipo")
@@ -12,7 +17,22 @@ public class Tipo {
 	private Long id;
 
 	@NotNull
-	private String tipo;
+	@Column(name = "tipo")
+	private String nome;
+
+	@Column(name = "ativo")
+	@Enumerated
+	@JsonIgnore
+	private StatusAtivo ativo;
+
+	@JsonFormat(pattern = "yyyy-MM-dd")
+	@Column(name = "created_at")
+	private LocalDateTime createdAt;
+
+	@PrePersist
+	private void prePersist() {
+		this.createdAt =  LocalDateTime.now();
+	}
 
 	public Long getId() {
 		return id;
@@ -22,12 +42,20 @@ public class Tipo {
 		this.id = id;
 	}
 
-	public String getTipo() {
-		return tipo;
+	public String getNome() {
+		return nome;
 	}
 
-	public void setTipo(String tipo) {
-		this.tipo = tipo;
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public StatusAtivo getAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(StatusAtivo ativo) {
+		this.ativo = ativo;
 	}
 
 	@Override

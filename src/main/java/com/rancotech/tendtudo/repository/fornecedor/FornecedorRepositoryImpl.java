@@ -1,6 +1,7 @@
 package com.rancotech.tendtudo.repository.fornecedor;
 
 import com.rancotech.tendtudo.model.Fornecedor;
+import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
 import com.rancotech.tendtudo.repository.filter.FornecedorFilter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -45,10 +46,27 @@ public class FornecedorRepositoryImpl implements FornecedorRepositoryQuery {
                                         Root<Fornecedor> root) {
         List<Predicate> predicates = new ArrayList<>();
 
-        if (!StringUtils.isEmpty(fornecedorFilter.getNome())) {
-            predicates.add(builder.like(
-                    builder.lower(root.get("nome")), "%" + fornecedorFilter.getNome().toLowerCase() + "%"));
+        if (!StringUtils.isEmpty(fornecedorFilter.getValorDeBusca())) {
+            Predicate predicate1 = builder.like(
+                    builder.lower(root.get("nome")), "%" + fornecedorFilter.getValorDeBusca().toLowerCase() + "%"
+            );
+
+            Predicate predicate2 = builder.like(
+                    builder.lower(root.get("nomeFantasia")), "%" + fornecedorFilter.getValorDeBusca().toLowerCase() + "%"
+            );
+
+            Predicate predicate3 = builder.like(
+                    builder.lower(root.get("cpfOuCnpj")), "%" + fornecedorFilter.getValorDeBusca().toLowerCase() + "%"
+            );
+
+            Predicate predicateOr = builder.or(predicate1, predicate2, predicate3);
+            predicates.add(predicateOr);
         }
+
+        Predicate p = builder.and(
+                builder.equal(root.get("ativo"), StatusAtivo.ATIVADO.ordinal())
+        );
+        predicates.add(p);
 
         return predicates.toArray(new Predicate[predicates.size()]);
     }

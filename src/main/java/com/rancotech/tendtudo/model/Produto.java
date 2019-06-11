@@ -1,11 +1,15 @@
 package com.rancotech.tendtudo.model;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -24,12 +28,30 @@ public class Produto implements Serializable {
     @Column(name = "estoque")
     private Integer estoque;
 
+    @Column(name = "reserva")
+    private Integer reserva;
+
     @Column(name = "valor")
     private BigDecimal valor;
 
     @ManyToOne
     @JoinColumn(name = "tipo_id")
     private Tipo tipo;
+
+    @Column(name = "ativo")
+    @Enumerated
+    private StatusAtivo ativo;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    private void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+
 
     /*@OneToMany(
             mappedBy = "produto",
@@ -71,6 +93,14 @@ public class Produto implements Serializable {
         this.estoque = estoque;
     }
 
+    public Integer getReserva() {
+        return reserva;
+    }
+
+    public void setReserva(Integer reserva) {
+        this.reserva = reserva;
+    }
+
     public BigDecimal getValor() {
         return valor;
     }
@@ -85,6 +115,14 @@ public class Produto implements Serializable {
 
     public void setTipo(Tipo tipo) {
         this.tipo = tipo;
+    }
+
+    public StatusAtivo getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(StatusAtivo ativo) {
+        this.ativo = ativo;
     }
 
     @Override
