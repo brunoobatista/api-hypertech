@@ -13,7 +13,6 @@ import java.util.Objects;
 @Table(name = "venda_produtos")
 public class VendaProduto {
 
-    @JsonIgnore
     @EmbeddedId
     private VendaProdutoId id;
 

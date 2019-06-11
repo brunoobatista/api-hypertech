@@ -1,10 +1,12 @@
 package com.rancotech.tendtudo.service;
 
 import com.rancotech.tendtudo.model.Cliente;
+import com.rancotech.tendtudo.model.Produto;
 import com.rancotech.tendtudo.model.Venda;
 import com.rancotech.tendtudo.model.VendaProduto;
 import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
 import com.rancotech.tendtudo.repository.ClienteRepository;
+import com.rancotech.tendtudo.repository.ProdutoRepository;
 import com.rancotech.tendtudo.repository.VendaProdutoRepository;
 import com.rancotech.tendtudo.repository.VendaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,37 +30,90 @@ public class VendaService {
     @Autowired
     private VendaRepository vendaRepository;
 
+    @Autowired
+    private ProdutoRepository produtoRepository;
+
     @Transactional
     public Venda salvar(Venda venda) {
-        Venda vendaSalvo = this.calculaValorTotalVenda(venda);
-
         Long id = venda.getClienteId();
+        this.calculaValorTotalVenda(venda);
 
         if (id != null) {
-            Optional<Cliente> cliente = clienteRepository.findById(id);
-            vendaSalvo.setCliente(cliente.get());
+            if (venda.getCliente() == null || (venda.getCliente() != null && venda.getCliente().getId() != id)) {
+                Optional<Cliente> cliente = clienteRepository.findById(id);
+                venda.setCliente(cliente.get());
+            }
         }
 
-        vendaSalvo.setAtivo(StatusAtivo.ATIVADO);
+        venda.setAtivo(StatusAtivo.ATIVADO);
 
-        this.vendaRepository.saveAndFlush(vendaSalvo);
+        this.vendaRepository.save(venda);
 
-        venda.getProdutos().forEach(p -> {
-            VendaProduto vendaProduto = new VendaProduto(vendaSalvo, p.getProduto(), p.getQuantidade());
-            vendaProdutoRepository.saveAndFlush(vendaProduto);
-        });
+        for (VendaProduto vp : venda.getProdutos()) {
+            VendaProduto vendaProduto;
+            if (vp.getId() == null) {
+                vendaProduto = new VendaProduto(venda, vp.getProduto(), vp.getQuantidade());
+                this.setReservaVendaNova(vp.getProduto(), vendaProduto);
+            } else {
+                vendaProduto = vendaProdutoRepository.findByVendaIdAndProdutoId(venda.getId(), vp.getProduto().getId()).get();
+                this.setReservaVendaExistente(vp.getProduto(), vendaProduto, vp);
+                vendaProduto.setQuantidade(vp.getQuantidade());
+            }
+            VendaProduto vpSalvo = vendaProdutoRepository.save(vendaProduto);
+            vp.setId(vpSalvo.getId());
+        }
 
         return venda;
     }
 
     @Transactional
+    public void finalizar(Venda venda) {
+        venda.setAtivo(StatusAtivo.ATIVADO);
+        for (VendaProduto vp: venda.getProdutos()) {
+            VendaProduto vendaProduto = vendaProdutoRepository.findByVendaIdAndProdutoId(venda.getId(), vp.getProduto().getId()).get();
+
+            Produto produto = vendaProduto.getProduto();
+            produto.setReserva(Math.subtractExact(produto.getReserva(), vendaProduto.getQuantidade()));
+            produto.setEstoque(Math.subtractExact(produto.getEstoque(), vendaProduto.getQuantidade()));
+            produtoRepository.saveAndFlush(produto);
+        }
+        vendaRepository.saveAndFlush(venda);
+    }
+
+    @Transactional
+    public void cancelar(Venda venda) {
+        venda.setAtivo(StatusAtivo.ATIVADO);
+        for (VendaProduto vp: venda.getProdutos()) {
+            VendaProduto vendaProduto = vendaProdutoRepository.findByVendaIdAndProdutoId(venda.getId(), vp.getProduto().getId()).get();
+
+            Produto produto = vendaProduto.getProduto();
+            produto.setReserva(Math.subtractExact(produto.getReserva(), vendaProduto.getQuantidade()));
+            produtoRepository.saveAndFlush(produto);
+        }
+        vendaRepository.saveAndFlush(venda);
+    }
+
+    @Transactional
+    public void estornar(Venda venda) {
+        venda.setAtivo(StatusAtivo.ATIVADO);
+        for (VendaProduto vp: venda.getProdutos()) {
+            VendaProduto vendaProduto = vendaProdutoRepository.findByVendaIdAndProdutoId(venda.getId(), vp.getProduto().getId()).get();
+
+            Produto produto = vendaProduto.getProduto();
+            produto.setEstoque(Math.addExact(produto.getEstoque(), vendaProduto.getQuantidade()));
+            produtoRepository.saveAndFlush(produto);
+        }
+        vendaRepository.saveAndFlush(venda);
+    }
+
+    @Transactional
     public Venda removerProduto(Long vendaId, Long produtoId) {
-        Optional<Venda> venda = this.vendaRepository.findById(vendaId);
-        Optional<VendaProduto> vendaProduto = this.vendaProdutoRepository.findByVendaIdAndProdutoId(venda.get().getId(), produtoId);
+        Optional<Venda> venda = vendaRepository.findById(vendaId);
+        Optional<VendaProduto> vendaProduto = vendaProdutoRepository.findByVendaIdAndProdutoId(venda.get().getId(), produtoId);
 
         this.removeProdutoDaLista(venda.get(), vendaProduto.get());
 
-        this.vendaProdutoRepository.deleteByVendaIdAndProdutoId(venda.get().getId(), produtoId);
+        vendaProdutoRepository.deleteByVendaIdAndProdutoId(venda.get().getId(), produtoId);
 
         return this.calculaValorTotalVenda(venda.get());
     }
@@ -74,11 +129,6 @@ public class VendaService {
             vendaRepository.saveAndFlush(venda.get());
         }
         return vendas.isEmpty() ? null : vendas.get(0);
-        //List<VendaProduto> vendaProdutos = venda.get().getProdutos();
-
-        /*vendaProdutos.forEach(vp -> {
-            this.removerProduto(venda.get().getId(), vp.getProduto().getId());
-        });*/
     }
 
     public Optional<Venda> findByIdAtivo(Long id) {
@@ -89,6 +139,16 @@ public class VendaService {
             venda.get().setCliente(cliente.get());
         }
         return venda;
+    }
+
+    private void setReservaVendaExistente(Produto produto, VendaProduto vendaProduto, VendaProduto novaVendaProduto) {
+        produto.setReserva(Math.subtractExact(produto.getReserva(), vendaProduto.getQuantidade()));
+        this.setReservaVendaNova(produto, novaVendaProduto);
+    }
+
+    private void setReservaVendaNova(Produto produto, VendaProduto vendaProduto) {
+        produto.setReserva(Math.addExact(produto.getReserva(), vendaProduto.getQuantidade()));
+        produtoRepository.saveAndFlush(produto);
     }
 
     private Venda calculaValorTotalVenda(Venda venda) {
@@ -103,6 +163,9 @@ public class VendaService {
     }
 
     private void removeProdutoDaLista(Venda venda, VendaProduto vendaProduto) {
+        Produto produto = vendaProduto.getProduto();
+        produto.setReserva(Math.subtractExact(produto.getReserva(), vendaProduto.getQuantidade()));
+        produtoRepository.saveAndFlush(produto);
         venda.getProdutos().remove(vendaProduto);
     }
 

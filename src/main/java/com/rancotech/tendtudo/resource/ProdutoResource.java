@@ -69,6 +69,11 @@ public class ProdutoResource {
         return ResponseEntity.status(HttpStatus.OK).body(produtoService.remover(id, pageable));
     }
 
-
+    @PutMapping("/{id}/adicionar")
+    @PreAuthorize("hasAnyAuthority('WRITE_PRODUTO', 'FULL_PRODUTO')")
+    public ResponseEntity<Produto> adicionarUnidades(@PathVariable Long id, @RequestBody Integer quantidade) {
+        Produto produto = produtoService.adicionarUnidade(id, quantidade);
+        return ResponseEntity.status(HttpStatus.OK).body(produto);
+    }
 
 }

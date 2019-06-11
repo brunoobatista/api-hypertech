@@ -52,15 +52,21 @@ public class VendaResource {
     @PreAuthorize("hasAnyAuthority('WRITE_VENDA', 'FULL_VENDA')")
     public ResponseEntity<Venda> salvarEmAberto(@Valid @RequestBody Venda venda, HttpServletResponse response) {
         venda.setStatus(StatusVenda.ABERTA.toString());
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.salvar(venda, response));
+
+        Venda vendaSalvo = vendaService.salvar(venda);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.salvar(vendaSalvo, response));
     }
 
     @PostMapping("/finalizar")
     @PreAuthorize("hasAnyAuthority('WRITE_VENDA', 'FULL_VENDA')")
-    public ResponseEntity<Venda> salvarFinalizar(@Valid @RequestBody Venda venda, HttpServletResponse response) {
+    public ResponseEntity<Void> finalizar(@Valid @RequestBody Venda venda, HttpServletResponse response) {
         if (venda.getStatus().equalsIgnoreCase(StatusVenda.ABERTA.toString())) {
             venda.setStatus(StatusVenda.FINALIZADA.toString());
-            return ResponseEntity.status(HttpStatus.CREATED).body(this.salvar(venda, response));
+
+            vendaService.finalizar(venda);
+
+            return ResponseEntity.status(HttpStatus.OK).build();
         } else {
             throw new AtualizarVendaException();
         }
@@ -71,6 +77,7 @@ public class VendaResource {
     public ResponseEntity<Venda> cancelar(@Valid @RequestBody Venda venda, HttpServletResponse response) {
         if (venda.getStatus().equalsIgnoreCase(StatusVenda.ABERTA.toString())) {
             venda.setStatus(StatusVenda.CANCELADA.toString());
+            vendaService.cancelar(venda);
             return ResponseEntity.status(HttpStatus.OK).body(this.salvar(venda, response));
         } else {
             throw new AtualizarVendaException();
@@ -82,6 +89,7 @@ public class VendaResource {
     public ResponseEntity<Venda> estornar(@Valid @RequestBody Venda venda, HttpServletResponse response) {
         if (venda.getStatus().equalsIgnoreCase(StatusVenda.FINALIZADA.toString())) {
             venda.setStatus(StatusVenda.ESTORNADA.toString());
+            vendaService.estornar(venda);
             return ResponseEntity.status(HttpStatus.OK).body(this.salvar(venda, response));
         } else {
             throw new AtualizarVendaException();
@@ -112,9 +120,7 @@ public class VendaResource {
     }
 
     private Venda salvar(Venda venda, HttpServletResponse response) {
-        Venda vendaSalvo = vendaService.salvar(venda);
-
-        publisher.publishEvent(new RecursoCriadoEvent(this, response, vendaSalvo.getId()));
-        return vendaSalvo;
+        publisher.publishEvent(new RecursoCriadoEvent(this, response, venda.getId()));
+        return venda;
     }
 }

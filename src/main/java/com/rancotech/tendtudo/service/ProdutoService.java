@@ -3,6 +3,7 @@ package com.rancotech.tendtudo.service;
 import com.rancotech.tendtudo.model.Produto;
 import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
 import com.rancotech.tendtudo.repository.ProdutoRepository;
+import com.rancotech.tendtudo.service.exception.ProdutoInexistenteException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,17 @@ public class ProdutoService {
             produtoRepository.saveAndFlush(produto.get());
         }
         return produtos.isEmpty() ? null : produtos.get(0);
+    }
+
+    public Produto adicionarUnidade(Long id, Integer quantidade) {
+        Optional<Produto> produto = produtoRepository.findById(id);
+        if (produto.isPresent()) {
+            produto.get().setEstoque(Math.addExact(produto.get().getEstoque(), quantidade));
+            produtoRepository.saveAndFlush(produto.get());
+        } else {
+            throw new ProdutoInexistenteException();
+        }
+        return produto.get();
     }
 
 }
