@@ -1,13 +1,14 @@
 package com.rancotech.tendtudo.config.property;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Primary;
 
 @Primary
-@ConfigurationProperties("tendtudo")
+@ConfigurationProperties(prefix = "tendtudo")
 public class TendtudoApiProperty {
 
-	private String originPermitida = "http://localhost:8000";
+	private String originPermitida = "http://localhost:4200";
 
     private final Seguranca seguranca = new Seguranca();
 	

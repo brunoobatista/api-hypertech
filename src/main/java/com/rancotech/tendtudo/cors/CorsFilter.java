@@ -18,8 +18,6 @@ public class CorsFilter implements Filter {
 
 	@Autowired
 	private TendtudoApiProperty tendtudoApiProperty;
-
-	private String origin = "http://localhost:4200";
 	
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
