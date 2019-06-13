@@ -13,7 +13,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +44,7 @@ public class VendaResource {
     @GetMapping
     @PreAuthorize("hasAnyAuthority('READ_VENDA', 'FULL_VENDA')")
     public Page<Venda> listar(VendaFilter vendaFilter, Pageable pageable) {
+        System.out.println("TESTELIST #$#$#$#$   " + "    $#$#$#$#$      "  );
         return vendaRepository.filtrar(vendaFilter, pageable);
     }
 
@@ -63,7 +63,7 @@ public class VendaResource {
 
     @PostMapping("/finalizar")
     @PreAuthorize("hasAnyAuthority('WRITE_VENDA', 'FULL_VENDA')")
-    public ResponseEntity<Venda> finalizar(@Valid @RequestBody Venda venda, HttpServletResponse response) {
+    public ResponseEntity<Void> finalizar(@Valid @RequestBody Venda venda, HttpServletResponse response) {
         if (venda.getStatus().equalsIgnoreCase(StatusVenda.ABERTA.toString())) {
             venda.setStatus(StatusVenda.FINALIZADA.toString());
 
