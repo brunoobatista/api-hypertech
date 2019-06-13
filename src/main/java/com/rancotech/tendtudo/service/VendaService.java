@@ -35,20 +35,23 @@ public class VendaService {
 
     @Transactional
     public Venda salvar(Venda venda) {
+        System.out.println("TESTE 1  #####");
         Long id = venda.getClienteId();
+        System.out.println("TESTE 2  #####");
         this.calculaValorTotalVenda(venda);
-
+        System.out.println("TESTE 3  #####");
         if (id != null) {
             if (venda.getCliente() == null || (venda.getCliente() != null && venda.getCliente().getId() != id)) {
                 Optional<Cliente> cliente = clienteRepository.findById(id);
                 venda.setCliente(cliente.get());
             }
         }
+        System.out.println("TESTE 4  #####");
 
         venda.setAtivo(StatusAtivo.ATIVADO);
-
+        System.out.println("TESTE 5  #####");
         this.vendaRepository.save(venda);
-
+        System.out.println("TESTE 6  #####");
         for (VendaProduto vp : venda.getProdutos()) {
             VendaProduto vendaProduto;
             if (vp.getId() == null) {
@@ -62,7 +65,7 @@ public class VendaService {
             VendaProduto vpSalvo = vendaProdutoRepository.save(vendaProduto);
             vp.setId(vpSalvo.getId());
         }
-
+        System.out.println("TESTE 7  #####");
         return venda;
     }
 
