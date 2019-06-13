@@ -1,0 +1,5 @@
+ALTER TABLE clientes ADD COLUMN created_at TIMESTAMP;
+ALTER TABLE produtos ADD COLUMN created_at TIMESTAMP;
+ALTER TABLE usuarios ADD COLUMN created_at TIMESTAMP;
+ALTER TABLE fornecedors ADD COLUMN created_at TIMESTAMP;
+ALTER TABLE tipos ADD COLUMN created_at TIMESTAMP;

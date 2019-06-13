@@ -5,7 +5,7 @@ import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
 @Entity
-@Table(name = "cidade")
+@Table(name = "cidades")
 public class Cidade {
 
     @Id

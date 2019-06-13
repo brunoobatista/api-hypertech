@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "produto")
+@Table(name = "produtos")
 public class Produto implements Serializable {
 
     @Id

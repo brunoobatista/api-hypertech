@@ -1,1 +1,0 @@
-ALTER TABLE venda ADD COLUMN status VARCHAR(50);

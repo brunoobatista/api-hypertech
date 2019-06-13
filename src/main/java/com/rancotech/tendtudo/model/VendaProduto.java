@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 @Entity
-@Table(name = "venda_produtos")
+@Table(name = "vendas_produtos")
 public class VendaProduto {
 
     @EmbeddedId

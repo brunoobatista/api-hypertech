@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -110,6 +111,12 @@ public class TendtudoExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({ UsernameObrigatorioException.class })
     public ResponseEntity<Object> handleUsernameObrigatorioException(Exception ex, WebRequest request) {
         String mensagemUsuario = messageSource.getMessage("username.obrigatoria", null, LocaleContextHolder.getLocale());
+        return this.montaMensagem(ex, request, mensagemUsuario);
+    }
+
+    @ExceptionHandler({ InvalidGrantException.class })
+    public ResponseEntity<Object> handleInvalidGrantException(Exception ex, WebRequest request) {
+        String mensagemUsuario = messageSource.getMessage("invalid.grant", null, LocaleContextHolder.getLocale());
         return this.montaMensagem(ex, request, mensagemUsuario);
     }
 

@@ -1,1 +1,0 @@
-ALTER TABLE venda_produtos ADD COLUMN valor NUMERIC(10,2) NOT NULL;

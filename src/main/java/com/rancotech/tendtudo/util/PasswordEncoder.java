@@ -7,13 +7,12 @@ public class PasswordEncoder {
     String nome;
     public static void main(String[] args) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        System.out.println(encoder.encode("maria"));
+        System.out.println(encoder.encode("adminbusiness@tendtudo"));
 
         byte a = 126;
         byte b = 0;
         a += b;
     PasswordEncoder pe = new PasswordEncoder();
-        System.out.println(a);
     }
 
 }
