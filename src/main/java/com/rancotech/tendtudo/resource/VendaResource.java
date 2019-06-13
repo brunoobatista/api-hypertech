@@ -48,7 +48,7 @@ public class VendaResource {
         return vendaRepository.filtrar(vendaFilter, pageable);
     }
 
-    @PostMapping
+    @PostMapping("/salvar")
     @PreAuthorize("hasAnyAuthority('WRITE_VENDA', 'FULL_VENDA')")
     public ResponseEntity<Venda> salvarEmAberto(@Valid @RequestBody Venda venda, HttpServletResponse response) {
         venda.setStatus(StatusVenda.ABERTA.toString());
