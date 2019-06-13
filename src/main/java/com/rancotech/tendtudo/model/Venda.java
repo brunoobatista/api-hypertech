@@ -1,6 +1,7 @@
 package com.rancotech.tendtudo.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
 import com.rancotech.tendtudo.model.enumerated.StatusVenda;
@@ -52,6 +53,7 @@ public class Venda {
     @Column(name = "status")
     private String status;
 
+    @JsonIgnore
     @Transient
     private Cliente cliente;
 

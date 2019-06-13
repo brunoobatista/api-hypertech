@@ -37,7 +37,6 @@ public class VendaService {
     public Venda salvar(Venda venda) {
         Long id = venda.getClienteId();
         this.calculaValorTotalVenda(venda);
-
         if (id != null) {
             if (venda.getCliente() == null || (venda.getCliente() != null && venda.getCliente().getId() != id)) {
                 Optional<Cliente> cliente = clienteRepository.findById(id);
@@ -46,9 +45,7 @@ public class VendaService {
         }
 
         venda.setAtivo(StatusAtivo.ATIVADO);
-
         this.vendaRepository.save(venda);
-
         for (VendaProduto vp : venda.getProdutos()) {
             VendaProduto vendaProduto;
             if (vp.getId() == null) {
@@ -62,7 +59,6 @@ public class VendaService {
             VendaProduto vpSalvo = vendaProdutoRepository.save(vendaProduto);
             vp.setId(vpSalvo.getId());
         }
-
         return venda;
     }
 
