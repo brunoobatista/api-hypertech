@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.Objects;
 
 @Entity
-@Table(name = "permissao")
+@Table(name = "permissaos")
 public class Permissao {
 
     @Id

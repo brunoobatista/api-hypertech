@@ -1,2 +1,0 @@
-ALTER TABLE venda ADD COLUMN IF NOT EXISTS desconto numeric(10,2) DEFAULT 0;
-ALTER TABLE venda ADD COLUMN IF NOT EXISTS cliente_id bigint;

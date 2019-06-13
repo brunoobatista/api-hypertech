@@ -15,7 +15,7 @@ import java.util.Objects;
 
 @CpfCnpjUnique(cpfCnpj = "cpfCnpj", id = "id", message = "CPF/CNPJ já existentes")
 @Entity
-@Table(name = "cliente")
+@Table(name = "clientes")
 @GroupSequenceProvider(ClienteGroupSequenceProvider.class)
 public class Cliente {
 

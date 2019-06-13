@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.Objects;
 
 @Entity
-@Table(name = "usuario")
+@Table(name = "usuarios")
 @CpfCnpjUnique(cpfCnpj = "cpf", id = "id", message = "CPF já existentes")
 public class Usuario {
 

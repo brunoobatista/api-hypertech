@@ -14,7 +14,7 @@ import java.util.Objects;
 
 @CpfCnpjUnique(cpfCnpj = "cpfOuCnpj", id = "id", message = "CPF/CNPJ já existentes")
 @Entity
-@Table(name =  "fornecedor")
+@Table(name =  "fornecedors")
 public class Fornecedor {
 
     @Id

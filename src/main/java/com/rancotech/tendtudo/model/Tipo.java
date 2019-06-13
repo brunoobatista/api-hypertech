@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "tipo")
+@Table(name = "tipos")
 public class Tipo {
 
 	@Id

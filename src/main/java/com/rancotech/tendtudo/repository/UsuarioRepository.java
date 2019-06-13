@@ -5,10 +5,12 @@ import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
 import com.rancotech.tendtudo.repository.usuario.UsuarioRepositoryQuery;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long>, UsuarioRepositoryQuery {
 
     Optional<Usuario> findByUsername(String username);
