@@ -44,7 +44,6 @@ public class VendaResource {
     @GetMapping
     @PreAuthorize("hasAnyAuthority('READ_VENDA', 'FULL_VENDA')")
     public Page<Venda> listar(VendaFilter vendaFilter, Pageable pageable) {
-        System.out.println("TESTELIST #$#$#$#$   " + "    $#$#$#$#$      "  );
         return vendaRepository.filtrar(vendaFilter, pageable);
     }
 
@@ -52,11 +51,8 @@ public class VendaResource {
     @PreAuthorize("hasAnyAuthority('WRITE_VENDA', 'FULL_VENDA')")
     public ResponseEntity<Venda> salvarEmAberto(@Valid @RequestBody Venda venda, HttpServletResponse response) {
         venda.setStatus(StatusVenda.ABERTA.toString());
-        System.out.println("TESTE #$#$#$#$   " + venda.getStatus() + "    $#$#$#$#$      "  + venda.getObservacao());
 
         Venda vendaSalvo = vendaService.salvar(venda);
-
-        System.out.println("TESTE@@@@222222 #$#$#$#$   " + venda.getId() + "    $#$#$#$#$      "  + venda.getObservacao());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(this.salvar(vendaSalvo, response));
     }

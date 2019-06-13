@@ -49,6 +49,7 @@ public class Produto implements Serializable {
     @PrePersist
     private void prePersist() {
         this.createdAt = LocalDateTime.now();
+        this.reserva = 0;
     }
 
 

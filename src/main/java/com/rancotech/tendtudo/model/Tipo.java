@@ -25,7 +25,7 @@ public class Tipo {
 	@JsonIgnore
 	private StatusAtivo ativo;
 
-	@JsonFormat(pattern = "yyyy-MM-dd")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
 

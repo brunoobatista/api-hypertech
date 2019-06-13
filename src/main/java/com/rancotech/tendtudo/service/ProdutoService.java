@@ -21,7 +21,7 @@ public class ProdutoService {
 
     public Produto salvar(Produto produto) {
         produto.setAtivo(StatusAtivo.ATIVADO);
-        Produto produtoSalvo = produtoRepository.saveAndFlush(produto);
+        Produto produtoSalvo = produtoRepository.save(produto);
 
         return produtoSalvo;
     }
