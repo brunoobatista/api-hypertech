@@ -1,5 +1,5 @@
-FROM openjdk:8-jdk-alpine
-VOLUME /tmp
-ARG JAR_FILE
-COPY ${JAR_FILE} app.jar
-ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+FROM openjdk:8u171-jdk-alpine3.8
+
+RUN set -x && \
+    addgroup -g 1000 appuser && \
+    adduser -u 1000 -D -G appuser appuser
