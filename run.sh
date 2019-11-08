@@ -1,4 +1,4 @@
 #!/bin/bash
-gradlew --stop
-gradlew build --continuous --quiet &
-gradlew bootRun
+gradle --stop
+gradle build --continuous --quiet &
+gradle bootRun

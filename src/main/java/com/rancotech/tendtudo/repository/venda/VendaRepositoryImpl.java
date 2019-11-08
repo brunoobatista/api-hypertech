@@ -1,6 +1,7 @@
 package com.rancotech.tendtudo.repository.venda;
 
 import com.rancotech.tendtudo.model.Venda;
+import com.rancotech.tendtudo.model.dashboard.TotalVendasMes;
 import com.rancotech.tendtudo.model.enumerated.StatusAtivo;
 import com.rancotech.tendtudo.model.enumerated.StatusVenda;
 import com.rancotech.tendtudo.repository.filter.VendaFilter;
@@ -11,6 +12,7 @@ import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -24,6 +26,13 @@ public class VendaRepositoryImpl implements VendaRepositoryQuery {
 
     @PersistenceContext
     private EntityManager manager;
+
+    @Override
+    public List<TotalVendasMes> getTotalVendas() {
+        StoredProcedureQuery getTotalVendas =
+                manager.createNamedStoredProcedureQuery("getTotalVendas");
+        return getTotalVendas.getResultList();
+    }
 
     @Override
     public Page<Venda> filtrar(VendaFilter vendaFilter, Pageable pageable) {

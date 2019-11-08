@@ -9,6 +9,7 @@ import com.rancotech.tendtudo.repository.ClienteRepository;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -16,7 +17,12 @@ import java.util.*;
 
 @Entity
 @Table(name = "vendas")
-public class Venda {
+@NamedStoredProcedureQueries({
+        @NamedStoredProcedureQuery(name = "getTotalVendas",
+                procedureName = "total_vendas"
+        )
+})
+public class Venda implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

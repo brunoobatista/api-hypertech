@@ -27,7 +27,8 @@ dependencies {
     compile 'org.springframework.security:spring-security-jwt:1.0.9.RELEASE'
     compile 'org.springframework.boot:spring-boot-configuration-processor:2.0.4.RELEASE'
     compile 'commons-beanutils:commons-beanutils:1.9.2'
-    runtime 'org.springframework.boot:spring-boot-devtools:2.0.4.RELEASE'
+    //runtime 'org.springframework.boot:spring-boot-devtools:2.0.4.RELEASE'
+    compile 'org.springframework.boot:spring-boot-devtools:2.0.4.RELEASE'
     runtime 'org.postgresql:postgresql:42.2.8'
     testCompile 'org.springframework.boot:spring-boot-starter-test:2.0.4.RELEASE'
 }
