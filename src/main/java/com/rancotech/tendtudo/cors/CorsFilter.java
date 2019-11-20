@@ -24,7 +24,7 @@ public class CorsFilter implements Filter {
 			throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse resp = (HttpServletResponse) response;
-		
+		System.out.println("####################    -  " + tendtudoApiProperty.getOriginPermitida() + "  -    ##############################");
 		resp.setHeader("Access-Control-Allow-Origin", tendtudoApiProperty.getOriginPermitida());
         resp.setHeader("Access-Control-Allow-Credentials", "true");
 
