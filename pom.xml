@@ -27,7 +27,7 @@
 		<spring-security-jwt.version>1.0.9.RELEASE</spring-security-jwt.version>
 
 		<!-- Apache Bean Utils -->
-		<commons-beanutils.version>1.9.2</commons-beanutils.version>
+		<commons-beanutils.version>1.9.4</commons-beanutils.version>
 	</properties>
 
 	<dependencies>
